@@ -3,6 +3,64 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        <ScrollViewer Grid.Column="0" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="8*"/>
+                    <ColumnDefinition Width="8*"/>
+                    <ColumnDefinition Width="8*" />
+                    <ColumnDefinition Width="8*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="8*"/>
+                    <RowDefinition Height="8*"/>
+                    <RowDefinition Height="8*"/>
+                    <RowDefinition Height="8*"/>
+                    <RowDefinition Height="8*"/>
+                    <RowDefinition Height="8*"/>
+                    <RowDefinition Height="8*"/>
+                    <RowDefinition Height="8*"/>
+                    <RowDefinition Height="8*"/>
+                    <RowDefinition Height="8*"/>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <Label Content="Общие настройки" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <Label Content="Размер карты (верт.)" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <TextBox Grid.Row="2" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                <Label Content="Размер карты (гор.)" Grid.Row="3" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <TextBox Grid.Row="3" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                <Label Content="Добавлять крошки" Grid.Row="4" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                <TextBox Grid.Row="4" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Center" IsEnabled="False"/>
+                <!-- <ComboBox Grid.Row="4" Grid.Column="3" VerticalAlignment="Center" SelectedIndex="1" IsEnabled="False">
+                    <ComboBoxItem Name="Yes">Да</ComboBoxItem>
+                    <ComboBoxItem Name="No">Нет</ComboBoxItem>
+                </ComboBox> -->
+                <Label Content="Настройки команд" Grid.Row="5" Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <Rectangle Grid.Column="2" Grid.Row="6" Grid.RowSpan="4" Margin="5,0,5,0" Fill="#1f00a2e8"/>
+                <Rectangle Grid.Column="3" Grid.Row="6" Grid.RowSpan="4" Margin="5,0,5,0" Fill="#1fed1c23"/>
+                <Label Grid.Row="6" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">Количество жуков</Label>
+                <TextBox Grid.Row="6" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="10,0,10,0"/>
+                <TextBox Grid.Row="6" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="10,0,10,0"/>
+                <Label Grid.Row="7" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">Скорость передвижения</Label>
+                <TextBox Grid.Row="7" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="10,0,10,0"/>
+                <TextBox Grid.Row="7" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="10,0,10,0"/>
+                <Label Grid.Row="8" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">Скорость поедания</Label>
+                <TextBox Grid.Row="8" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="10,0,10,0" IsEnabled="False"/>
+                <TextBox Grid.Row="8" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="10,0,10,0" IsEnabled="False"/>
+                <Label Grid.Row="9" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">Сила</Label>
+                <TextBox Grid.Row="9" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="10,0,10,0"/>
+                <TextBox Grid.Row="9" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="10,0,10,0"/>
+                <Button Content="Играть!" Grid.Row="10" Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Grid>
+        </ScrollViewer>
     </Grid>
 </Window>
