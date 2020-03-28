@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Express 2012 for Windows Desktop
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Course", "Course.csproj", "{6DFDF38E-31EB-45F8-A00F-A737827F3E05}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BugWars", "BugWars.csproj", "{6DFDF38E-31EB-45F8-A00F-A737827F3E05}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

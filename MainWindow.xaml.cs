@@ -13,13 +13,13 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Course
+namespace BugWars
 {
     public partial class MainWindow : Window
     {
         // TODO: хздесь немного криво получается потому что нужно править класс
         // view model в двух местах. Здесь и в XAML схеме.
-        private MainWindowVM ViewModel { get { return DataContext as MainWindowVM; } }
+        //private MainWindowVM ViewModel { get { return DataContext as MainWindowVM; } }
 
         public MainWindow()
         {
