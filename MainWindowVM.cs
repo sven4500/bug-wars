@@ -9,6 +9,8 @@ namespace BugWars
 {
     public class MainWindowVM
     {
+        public Config Conf { get; set; }
+
         public MainWindowVM()
         { }
     }

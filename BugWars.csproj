@@ -53,6 +53,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Config.cs" />
     <Compile Include="DelegateCommand.cs" />
     <Page Include="ConfigWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
