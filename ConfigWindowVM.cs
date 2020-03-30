@@ -7,7 +7,7 @@ using System.Windows.Input; // ICommand
 
 namespace BugWars
 {
-    public class MainWindowVM
+    public class ConfigWindowVM
     {
         public static readonly uint maxDim = 1000;
 
@@ -119,7 +119,7 @@ namespace BugWars
             get { return playButtonCommand; }
         }
 
-        public MainWindowVM()
+        public ConfigWindowVM()
         {
              playButtonCommand = new DelegateCommand(Function);
         }

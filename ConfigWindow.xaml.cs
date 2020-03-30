@@ -15,13 +15,13 @@ using System.Windows.Shapes;
 
 namespace BugWars
 {
-    public partial class MainWindow : Window
+    public partial class ConfigWindow : Window
     {
         // TODO: хздесь немного криво получается потому что нужно править класс
         // view model в двух местах. Здесь и в XAML схеме.
         //private MainWindowVM ViewModel { get { return DataContext as MainWindowVM; } }
 
-        public MainWindow()
+        public ConfigWindow()
         {
             InitializeComponent();
         }
