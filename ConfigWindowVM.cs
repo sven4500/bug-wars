@@ -126,7 +126,8 @@ namespace BugWars
 
         private void Function(object parameter)
         {
-            System.Windows.MessageBox.Show("Игра скоро начнётся");
+            MainWindow mainWindow = new MainWindow();
+            mainWindow.ShowDialog();
         }
 
     }
