@@ -55,7 +55,7 @@
     </ApplicationDefinition>
     <Compile Include="Config.cs" />
     <Compile Include="DelegateCommand.cs" />
-    <Page Include="ConfigWindow.xaml">
+    <Page Include="ConfigWindow\ConfigWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -63,21 +63,21 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ConfigWindow.xaml.cs">
+    <Compile Include="ConfigWindow\ConfigWindow.xaml.cs">
       <DependentUpon>ConfigWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="MainWindow.xaml">
+    <Page Include="MainWindow\MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConfigWindowVM.cs" />
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="ConfigWindow\ConfigWindowVM.cs" />
+    <Compile Include="MainWindow\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainWindowVM.cs" />
+    <Compile Include="MainWindow\MainWindowVM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
