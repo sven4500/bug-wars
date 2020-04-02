@@ -16,13 +16,14 @@ namespace BugWars
 {
     public partial class MainWindow : Window
     {
+        readonly private MainWindowVM viewModel = new MainWindowVM();
+
         public MainWindow(Config conf)
         {
-            InitializeComponent();
+            viewModel.Conf = conf;
+            DataContext = viewModel;
 
-            MainWindowVM viewModel = DataContext as MainWindowVM;
-            if (viewModel != null)
-                viewModel.Conf = conf;
+            InitializeComponent();
         }
     }
 }

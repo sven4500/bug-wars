@@ -3,10 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:BugWars"
         Title="Войны жуков" Height="300" Width="400">
-    <Window.DataContext>
+    <!-- <Window.DataContext>
         <local:MainWindowVM/>
-    </Window.DataContext>
+    </Window.DataContext> -->
     <Grid>
-        
+        <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
     </Grid>
 </Window>

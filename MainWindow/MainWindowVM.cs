@@ -9,6 +9,8 @@ namespace BugWars
 {
     public class MainWindowVM
     {
+        readonly private MainWindowModel model = new MainWindowModel();
+
         public Config Conf { get; set; }
 
         public MainWindowVM()

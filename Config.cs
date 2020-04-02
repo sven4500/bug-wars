@@ -8,32 +8,6 @@ namespace BugWars
 {
     public class Config
     {
-        /*public Config(uint _mapWidth, uint _mapHeight, uint _feedRate,
-            uint _bugCountBlue, uint _bugCountRed, uint _bugHealthBlue, uint _bugHealthRed,
-            uint _bugSpeedBlue, uint _bugSpeedRed, uint _bugEatRateBlue, uint _bugEatRateRed,
-            uint _bugStrengthBlue, uint _bugStrengthRed)
-        {
-            mapWidth = _mapWidth;
-            mapHeight = _mapHeight;
-
-            feedRate = _feedRate;
-
-            bugCountBlue = _bugCountBlue;
-            bugCountRed = _bugCountRed;
-
-            bugHealthBlue = _bugHealthBlue;
-            bugHealthRed = _bugHealthRed;
-
-            bugSpeedBlue = _bugSpeedBlue;
-            bugSpeedRed = _bugSpeedRed;
-
-            bugEatRateBlue = _bugEatRateBlue;
-            bugEatRateRed = _bugEatRateRed;
-
-            bugStrengthBlue = _bugStrengthBlue;
-            bugStrengthRed = _bugStrengthRed;
-        }*/
-
         public bool IsValid
         {
             get { return (MapSize >= BugCountTotal) && (BugHealthBlue > 0) && (BugHealthRed > 0); }
