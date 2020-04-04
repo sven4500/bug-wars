@@ -6,7 +6,19 @@
     <!-- <Window.DataContext>
         <local:MainWindowVM/>
     </Window.DataContext> -->
-    <Grid>
-        <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-    </Grid>
+
+    <ItemsControl ItemsSource="{Binding Shapes}">
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <Canvas Width="{Binding CanvasWidth}" Height="{Binding CanvasHeight}"/>
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+    </ItemsControl>
+
+    <!-- 
+    <Viewbox Stretch="Uniform">
+        <Canvas Width="{Binding CanvasWidth}" Height="{Binding CanvasHeight}"/>
+    </Viewbox>
+    -->
+    
 </Window>
