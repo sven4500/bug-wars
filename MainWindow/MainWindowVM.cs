@@ -14,10 +14,10 @@ namespace BugWars
     {
         readonly private MainWindowModel model = new MainWindowModel();
 
-        private uint canvasWidth = 500;
+        private uint canvasWidth = 640;
         public uint CanvasWidth { get { return canvasWidth; } }
 
-        private uint canvasHeight = 500;
+        private uint canvasHeight = 480;
         public uint CanvasHeight { get { return canvasHeight; } }
 
         // В этой коллекции находится абсолютно всё что должно нарисовать Canvas.
@@ -29,11 +29,15 @@ namespace BugWars
         public MainWindowVM(Config _conf)
         {
             conf = _conf;
+            makeGrid();
+        }
 
-            for(uint i = 0; i <= _conf.MapWidth; ++i)
+        private void makeGrid()
+        {
+            for (uint i = 0; i <= conf.MapWidth; ++i)
             {
                 Line line = new Line();
-                
+
                 line.X1 = (double)CanvasWidth / conf.MapWidth * i;
                 line.Y1 = 0;
 
@@ -46,7 +50,7 @@ namespace BugWars
                 shapes.Add(line);
             }
 
-            for (uint i = 0; i <= _conf.MapHeight; ++i)
+            for (uint i = 0; i <= conf.MapHeight; ++i)
             {
                 Line line = new Line();
 

@@ -14,8 +14,8 @@ namespace BugWars
         // Здесь можно задать настройки по умолчанию.
         private Config conf = new Config
         {
-            MapWidth = 400,
-            MapHeight = 300,
+            MapWidth = 40,
+            MapHeight = 30,
             FeedRate = 0,
             BugCountBlue = 10,
             BugCountRed = 10,
