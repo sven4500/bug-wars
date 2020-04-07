@@ -53,6 +53,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="GameObjectConverter.cs" />
+    <Compile Include="GameObjects\Bug.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="DelegateCommand.cs" />
     <Page Include="ConfigWindow\ConfigWindow.xaml">
@@ -74,6 +76,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigWindow\ConfigWindowVM.cs" />
+    <Compile Include="GameObjects\Egg.cs" />
+    <Compile Include="GameObjects\Food.cs" />
+    <Compile Include="GameObjects\GameObject.cs" />
+    <Compile Include="GameObjects\GridLine.cs" />
+    <Compile Include="GameObjects\HorizontalGridLine.cs" />
+    <Compile Include="GameObjects\IGameObject.cs" />
+    <Compile Include="GameObjects\VerticalGridLine.cs" />
     <Compile Include="MainWindow\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>

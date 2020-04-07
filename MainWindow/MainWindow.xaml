@@ -3,14 +3,20 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:BugWars"
         Title="Войны жуков" Height="300" Width="400">
-    
-    <!-- <Window.DataContext>
-        <local:MainWindowVM/>
-    </Window.DataContext> -->
-    
+
     <!-- Используем свойство Stretch чтобы растянуть Canvas на полный размер окна. -->
     <Viewbox Stretch="Fill">
-        <ItemsControl ItemsSource="{Binding Shapes}">
+        <!-- Не понимаю какую роль здесь играет элемент ItemsControl, но вот пример:
+        https://stackoverflow.com/questions/2317713/binding-wpf-canvas-children-to-an-observablecollection -->
+        <ItemsControl>
+            <ItemsControl.Resources>
+                <local:GameObjectConverter x:Key="GameObjectConverterObject"/>
+            </ItemsControl.Resources>
+            
+            <ItemsControl.ItemsSource>
+                <Binding Path="GameObjects" Mode="OneWay" Converter="{StaticResource GameObjectConverterObject}"/>
+            </ItemsControl.ItemsSource>
+            
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Canvas Width="{Binding CanvasWidth}" Height="{Binding CanvasHeight}"/>

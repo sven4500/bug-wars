@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Shapes; // Shape
 using System.Windows.Media; // Brushes
 using System.Collections.ObjectModel; // ObservableCollection<>
+using BugWars.GameObjects; // IGameObject
 
 namespace BugWars
 {
@@ -20,9 +21,12 @@ namespace BugWars
         private uint canvasHeight = 480;
         public uint CanvasHeight { get { return canvasHeight; } }
 
-        // В этой коллекции находится абсолютно всё что должно нарисовать Canvas.
-        readonly private ObservableCollection<Shape> shapes = new ObservableCollection<Shape>();
-        public ObservableCollection<Shape> Shapes { get { return shapes; } }
+        // В этой коллекции находится абсолютно всё что должен нарисовать
+        // Canvas. Для объекта Canvas добавлен преобразователь данных который
+        // самостоятельно производит преобразование GameObject объектов к
+        // объектам типа Shape.
+        readonly private ObservableCollection<IGameObject> gameObjects = new ObservableCollection<IGameObject>();
+        public ObservableCollection<IGameObject> GameObjects { get { return gameObjects; } }
 
         readonly private Config conf;
 
@@ -36,34 +40,34 @@ namespace BugWars
         {
             for (uint i = 0; i <= conf.MapWidth; ++i)
             {
-                Line line = new Line();
+                VerticalGridLine line = new VerticalGridLine();
 
-                line.X1 = (double)CanvasWidth / conf.MapWidth * i;
-                line.Y1 = 0;
+                line.CanvasWidth = canvasWidth;
+                line.CanvasHeight = canvasHeight;
+                
+                line.MapWidth = conf.MapWidth;
+                line.MapHeight = conf.MapHeight;
 
-                line.X2 = line.X1;
-                line.Y2 = CanvasHeight;
+                line.PosX = i;
+                line.PosY = 0;
 
-                line.Stroke = Brushes.Black;
-                line.StrokeThickness = 1;
-
-                shapes.Add(line);
+                gameObjects.Add(line);
             }
 
             for (uint i = 0; i <= conf.MapHeight; ++i)
             {
-                Line line = new Line();
+                HorizontalGridLine line = new HorizontalGridLine();
 
-                line.X1 = 0;
-                line.Y1 = (double)CanvasHeight / conf.MapHeight * i;
+                line.CanvasWidth = canvasWidth;
+                line.CanvasHeight = canvasHeight;
 
-                line.X2 = canvasWidth;
-                line.Y2 = line.Y1;
+                line.MapWidth = conf.MapWidth;
+                line.MapHeight = conf.MapHeight;
 
-                line.Stroke = Brushes.Black;
-                line.StrokeThickness = 1;
+                line.PosX = 0;
+                line.PosY = i;
 
-                shapes.Add(line);
+                gameObjects.Add(line);
             }
         }
     }
