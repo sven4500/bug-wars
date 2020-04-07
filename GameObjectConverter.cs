@@ -14,6 +14,14 @@ namespace BugWars
 {
     public class GameObjectConverter : IValueConverter
     {
+        private double gridOpacity;
+        public double GridOpacity { get { return gridOpacity; } set { gridOpacity = (value >= 0.0 && value <= 1.0) ? value : gridOpacity; } }
+
+        public GameObjectConverter()
+        {
+            gridOpacity = 1.0;
+        }
+
         private Shape ConvertHorizontalLine(IGameObject gameObject)
         {
             HorizontalGridLine gridLine = gameObject as HorizontalGridLine;
@@ -28,7 +36,8 @@ namespace BugWars
             line.X2 = gridLine.CanvasWidth;
             line.Y2 = line.Y1;
 
-            line.Stroke = Brushes.Black;
+            line.Stroke = new SolidColorBrush(Colors.Black);
+            line.Stroke.Opacity = GridOpacity;
             line.StrokeThickness = 1;
 
             return line;
@@ -48,7 +57,8 @@ namespace BugWars
             line.X2 = line.X1;
             line.Y2 = gridLine.CanvasHeight;
 
-            line.Stroke = Brushes.Black;
+            line.Stroke = new SolidColorBrush(Colors.Black);
+            line.Stroke.Opacity = GridOpacity;
             line.StrokeThickness = 1;
 
             return line;

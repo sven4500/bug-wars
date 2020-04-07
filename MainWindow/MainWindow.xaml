@@ -10,7 +10,9 @@
         https://stackoverflow.com/questions/2317713/binding-wpf-canvas-children-to-an-observablecollection -->
         <ItemsControl>
             <ItemsControl.Resources>
-                <local:GameObjectConverter x:Key="GameObjectConverterObject"/>
+                <!-- Здесь реализована передача аргументов в преобразователь данных тем самым
+                можно удобно настраивать внешний вид прямиком из XAML редактора. -->
+                <local:GameObjectConverter x:Key="GameObjectConverterObject" GridOpacity="0.1"/>
             </ItemsControl.Resources>
             
             <ItemsControl.ItemsSource>
