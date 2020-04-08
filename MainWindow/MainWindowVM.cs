@@ -54,13 +54,7 @@ namespace BugWars
 
             for (uint i = 0; i <= conf.MapWidth; ++i)
             {
-                VerticalGridLine line = new VerticalGridLine();
-
-                line.CanvasWidth = canvasWidth;
-                line.CanvasHeight = canvasHeight;
-
-                line.MapWidth = conf.MapWidth;
-                line.MapHeight = conf.MapHeight;
+                VerticalGridLine line = new VerticalGridLine(conf.MapWidth, conf.MapHeight, canvasWidth, canvasHeight);
 
                 line.PosX = i;
                 line.PosY = 0;
@@ -70,13 +64,7 @@ namespace BugWars
 
             for (uint i = 0; i <= conf.MapHeight; ++i)
             {
-                HorizontalGridLine line = new HorizontalGridLine();
-
-                line.CanvasWidth = canvasWidth;
-                line.CanvasHeight = canvasHeight;
-
-                line.MapWidth = conf.MapWidth;
-                line.MapHeight = conf.MapHeight;
+                HorizontalGridLine line = new HorizontalGridLine(conf.MapWidth, conf.MapHeight, canvasWidth, canvasHeight);
 
                 line.PosX = 0;
                 line.PosY = i;

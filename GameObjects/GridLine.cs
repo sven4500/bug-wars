@@ -9,11 +9,11 @@ namespace BugWars
 {
     public class GridLine : IGameObject
     {
-        public uint CanvasWidth { get; set; }
-        public uint CanvasHeight { get; set; }
+        public uint CanvasWidth { get; private set; }
+        public uint CanvasHeight { get; private set; }
 
-        public uint MapWidth { get; set; }
-        public uint MapHeight { get; set; }
+        public uint MapWidth { get; private set; }
+        public uint MapHeight { get; private set; }
 
         public double StepWidth { get { return (double)CanvasWidth / MapWidth; } }
         public double StepHeight { get { return (double)CanvasHeight / MapHeight; } }
@@ -28,7 +28,13 @@ namespace BugWars
         public uint PosY { get; set; }
 
         // Защищённый метод чтобы нельзя было создать объект этого класса.
-        protected GridLine()
-        { }
+        protected GridLine(uint mapWidth, uint mapHeight, uint canvasWidth, uint canvasHeight)
+        {
+            MapWidth = mapWidth;
+            MapHeight = mapHeight;
+
+            CanvasWidth = canvasWidth;
+            CanvasHeight = canvasHeight;
+        }
     }
 }
