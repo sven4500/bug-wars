@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls; // Canvas
 using System.Windows.Threading; // DispatchetTimer
 using System.Windows.Shapes; // Shape
 using System.Windows.Media; // Brushes
 using System.Collections.ObjectModel; // ObservableCollection<>
 using System.ComponentModel; // INotifyPropertyChanged
-using BugWars.GameObjects; // IGameObject
+using BugWars.GameObjects; // IGameObject, Bug, Egg, Food, ..
 
 namespace BugWars
 {
@@ -22,7 +23,7 @@ namespace BugWars
                 PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        readonly private MainWindowModel model = new MainWindowModel();
+        readonly private MainWindowModel model;
         readonly private Config conf;
 
         private uint canvasWidth = 640;
@@ -56,6 +57,7 @@ namespace BugWars
         public MainWindowVM(Config _conf)
         {
             conf = _conf;
+            model = new MainWindowModel(conf);
 
             for (uint i = 0; i <= conf.MapWidth; ++i)
             {
@@ -106,13 +108,38 @@ namespace BugWars
             throw new NotImplementedException();
         }
 
+        private Shape ConvertBug(IGameObject gameObject)
+        {
+            Bug bug = gameObject as Bug;
+            if (bug == null)
+                return null;
+
+            Shape rect = new Rectangle();
+
+            // Здесь относительно того как двигать фигуру программно:
+            // https://stackoverflow.com/questions/23385876/moving-the-dynamically-drawn-rectangle-inside-the-canvas-using-mousemove-event
+            rect.SetValue(Canvas.LeftProperty, bug.PosX * StepWidth);
+            rect.SetValue(Canvas.TopProperty, bug.PosY * StepHeight);
+
+            rect.Width = StepWidth;
+            rect.Height = StepHeight;
+
+            rect.Fill = (bug.Team == Bug.TeamEnum.Blue) ? Brushes.Blue : Brushes.Red;
+
+            return rect;
+        }
+
         private Shape Convert(IGameObject gameObject)
         {
             Shape shape = null;
 
             if (gameObject == null)
             {
-
+                //shape == null;
+            }
+            else if (gameObject as Bug != null)
+            {
+                shape = ConvertBug(gameObject);
             }
             else
             {
@@ -124,11 +151,11 @@ namespace BugWars
 
         private void Tick(object sender, EventArgs e)
         {
-            //model.Update();
+            model.Update();
 
             Shapes.Clear();
             gridLines.ToList().ForEach(Shapes.Add);
-            //model.Bugs.ToList().ForEach(val => Convert(val));
+            model.Bugs.ToList().ForEach(val => { Shapes.Add(Convert(val)); });
 
             // Говорим WPF что коллекция объектов для отрисовки изменилась.
             OnPropertyChanged("Shapes");
