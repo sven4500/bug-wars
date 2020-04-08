@@ -14,13 +14,11 @@ namespace BugWars
 {
     public class GameObjectConverter : IValueConverter
     {
-        private double gridOpacity;
+        private double gridOpacity = 1.0;
         public double GridOpacity { get { return gridOpacity; } set { gridOpacity = (value >= 0.0 && value <= 1.0) ? value : gridOpacity; } }
 
         public GameObjectConverter()
-        {
-            gridOpacity = 1.0;
-        }
+        { }
 
         private Shape ConvertHorizontalLine(IGameObject gameObject)
         {
