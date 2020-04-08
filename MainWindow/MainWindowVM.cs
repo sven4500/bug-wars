@@ -6,12 +6,20 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading; // DispatchetTimer
 using System.Collections.ObjectModel; // ObservableCollection<>
+using System.ComponentModel; // INotifyPropertyChanged
 using BugWars.GameObjects; // IGameObject
 
 namespace BugWars
 {
-    public class MainWindowVM
+    public class MainWindowVM : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         readonly private MainWindowModel model = new MainWindowModel();
 
         private uint canvasWidth = 640;
@@ -29,9 +37,14 @@ namespace BugWars
         // В этой коллекции находится абсолютно всё что должен нарисовать
         // Canvas. Для объекта Canvas добавлен преобразователь данных который
         // самостоятельно производит преобразование GameObject объектов к
-        // объектам типа Shape.
+        // объектам типа Shape. Периодически по таймеру эта коллекция будет
+        // обновлятся значениями из модели.
         readonly private ObservableCollection<IGameObject> gameObjects = new ObservableCollection<IGameObject>();
         public ObservableCollection<IGameObject> GameObjects { get { return gameObjects; } }
+
+        // Коллекция линий для рисования сетки игрового поля. Эта коллекция не
+        // будет изменяться во время работы программы.
+        readonly private ObservableCollection<IGameObject> gridLines = new ObservableCollection<IGameObject>();
 
         readonly private Config conf;
 
@@ -39,35 +52,20 @@ namespace BugWars
         {
             conf = _conf;
 
-            makeGrid();
-
-            // Пример использования таймера:
-            // https://qna.habr.com/q/76590
-            timer = new DispatcherTimer();
-            timer.Tick += Tick;
-            timer.Interval = new TimeSpan((long)(10000000 * refreshRate));
-            timer.Start();
-        }
-
-        private void Tick(object sender, EventArgs e)
-        { }
-
-        private void makeGrid()
-        {
             for (uint i = 0; i <= conf.MapWidth; ++i)
             {
                 VerticalGridLine line = new VerticalGridLine();
 
                 line.CanvasWidth = canvasWidth;
                 line.CanvasHeight = canvasHeight;
-                
+
                 line.MapWidth = conf.MapWidth;
                 line.MapHeight = conf.MapHeight;
 
                 line.PosX = i;
                 line.PosY = 0;
 
-                gameObjects.Add(line);
+                gridLines.Add(line);
             }
 
             for (uint i = 0; i <= conf.MapHeight; ++i)
@@ -83,8 +81,25 @@ namespace BugWars
                 line.PosX = 0;
                 line.PosY = i;
 
-                gameObjects.Add(line);
+                gridLines.Add(line);
             }
+
+            // Пример использования таймера:
+            // https://qna.habr.com/q/76590
+            timer = new DispatcherTimer();
+            timer.Tick += Tick;
+            timer.Interval = new TimeSpan((long)(10000000 * refreshRate));
+            timer.Start();
+        }
+
+        private void Tick(object sender, EventArgs e)
+        {
+            gameObjects.Clear();
+            gridLines.ToList().ForEach(gameObjects.Add);
+
+            // Говорим WPF что коллекция игровых объектов изменилась и нужно
+            // нарисовать их заново.
+            OnPropertyChanged("GameObjects");
         }
     }
 }
