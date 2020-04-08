@@ -18,8 +18,10 @@ namespace BugWars
     {
         public MainWindow(Config conf)
         {
-            DataContext = new MainWindowVM(conf);
+            MainWindowVM viewModel = new MainWindowVM(conf);
+            DataContext = viewModel;
             InitializeComponent();
+            viewModel.Start();
         }
     }
 }

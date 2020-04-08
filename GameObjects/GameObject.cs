@@ -8,19 +8,10 @@ namespace BugWars.GameObjects
 {
     public class GameObject : IGameObject
     {
-        public uint MapWidth { get; private set; }
-        public uint MapHeight { get; private set; }
+        public uint PosX { get; set; }
+        public uint PosY { get; set; }
 
-        private uint posX;
-        uint IGameObject.PosX { get { return posX; } set { posX = value % MapWidth; } }
-
-        private uint posY;
-        uint IGameObject.PosY { get { return posY; } set { posY = value % MapHeight; } }
-
-        GameObject(uint _mapWidth, uint _mapHeight)
-        {
-            MapWidth = _mapWidth;
-            MapHeight = _mapHeight;
-        }
+        protected GameObject()
+        { }
     }
 }
