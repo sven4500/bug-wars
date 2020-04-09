@@ -23,8 +23,8 @@ namespace BugWars
             BugHealthRed = 100,
             BugSpeedBlue = 1,
             BugSpeedRed = 1,
-            BugEatRateBlue = 1,
-            BugEatRateRed = 1,
+            BugAppetiteBlue = 1,
+            BugAppetiteRed = 1,
             BugStrengthBlue = 3,
             BugStrengthRed = 3
         };

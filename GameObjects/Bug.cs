@@ -13,5 +13,10 @@ namespace BugWars.GameObjects
 
         public TeamEnum Team { get; set; }
         public SexEnum Sex { get; set; }
+
+        public uint Health { get; set; }
+        public uint Speed { get; set; }
+        public uint Strength { get; set; }
+        public uint Appetite { get; set; }
     }
 }

@@ -155,7 +155,8 @@ namespace BugWars
 
             Shapes.Clear();
             gridLines.ToList().ForEach(Shapes.Add);
-            model.Bugs.ToList().ForEach(val => { Shapes.Add(Convert(val)); });
+            model.BugsBlue.ToList().ForEach(val => { Shapes.Add(Convert(val)); });
+            model.BugsRed.ToList().ForEach(val => { Shapes.Add(Convert(val)); });
 
             // Говорим WPF что коллекция объектов для отрисовки изменилась.
             OnPropertyChanged("Shapes");
