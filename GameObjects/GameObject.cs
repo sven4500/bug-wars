@@ -8,8 +8,8 @@ namespace BugWars.GameObjects
 {
     public class GameObject : IGameObject
     {
-        public uint PosX { get; set; }
-        public uint PosY { get; set; }
+        public int PosX { get; set; }
+        public int PosY { get; set; }
 
         protected GameObject()
         { }

@@ -14,6 +14,12 @@ namespace BugWars
     {
         readonly private Config conf;
 
+        // Глобальный рандомизатор модели. Используется при расстановке жуков
+        // по игровому полю в произвольном порядке.
+        readonly private Random random = new Random(Environment.TickCount);
+
+        // Так как коллекции жуков две (синяя комманда и красная комманда), то
+        // создаём один общий элемент синхронизации.
         readonly private object bugLock = new object();
 
         readonly private ObservableCollection<Bug> bugsBlue = new ObservableCollection<Bug>();
@@ -27,8 +33,6 @@ namespace BugWars
             conf = _conf;
 
             {
-                var random = new Random(Environment.TickCount);
-
                 var posX = RandomUniqueList(0, (int)conf.MapWidth, (int)conf.BugCountTotal, random);
                 var teamBluePosX = posX.GetRange(0, (int)conf.BugCountBlue);
                 var teamRedPosX = posX.GetRange((int)conf.BugCountBlue, (int)conf.BugCountRed);
@@ -61,10 +65,56 @@ namespace BugWars
         {
             Bug bug = antecedent.Result as Bug;
             if (bug == null) { return null; }
-            
+
+            int desiredX = bug.PosX;
+            int desiredY = bug.PosY;
+
+            if (bug.Direction == Bug.DirectionEnum.Up)
+                --desiredY;
+            else if (bug.Direction == Bug.DirectionEnum.Down)
+                ++desiredY;
+            else if (bug.Direction == Bug.DirectionEnum.Lef)
+                --desiredX;
+            else if (bug.Direction == Bug.DirectionEnum.Right)
+                ++desiredX;
+
+            // Находимся на границе игрового поля. Дальше идти не можем поэтому
+            // выбираем новое случайное направление.
+            if (desiredX < 0 || desiredX >= conf.MapWidth || desiredY < 0 || desiredY >= conf.MapHeight)
+            {
+                bug.Direction = Bug.GetRandomDirection();
+                return bug;
+            }
+
             lock (bugLock)
             {
+                IEnumerable<Bug> blueBugs =
+                    from temp in bugsBlue
+                    where temp.PosX == desiredX && temp.PosY == desiredY
+                    select temp;
 
+                IEnumerable<Bug> redBugs =
+                    from temp in bugsRed
+                    where temp.PosX == desiredX && temp.PosY == desiredY
+                    select temp;
+
+                // В обоих командах смотрим есть ли такой жук который находится
+                // на желаемом поле. Если да, то меняем направление.
+                if (blueBugs.Any() == false && redBugs.Any() == false)
+                {
+                    bug.PosX = desiredX;
+                    bug.PosY = desiredY;
+                }
+                else
+                {
+                    bug.Direction = Bug.GetRandomDirection();
+                }
+            }
+
+            // Здесь направление жука меняется произвольным образом.
+            if (random.Next() % 100 > 60 == true)
+            {
+                bug.Direction = Bug.GetRandomDirection();
             }
 
             return bug;
@@ -140,8 +190,8 @@ namespace BugWars
                     throw new Exception();
 
                 Bug bug = new Bug();
-                bug.PosX = (uint)posX.Current;
-                bug.PosY = (uint)posY.Current;
+                bug.PosX = posX.Current;
+                bug.PosY = posY.Current;
                 bug.Team = team;
                 bug.Sex = Bug.GetRandomSex();
                 bug.Direction = Bug.GetRandomDirection();

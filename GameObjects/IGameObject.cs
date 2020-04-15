@@ -11,7 +11,7 @@ namespace BugWars.GameObjects
     // также задаёт ограничение по пространству MapWidth и MapHeight.
     public interface IGameObject
     {
-        uint PosX { get; set; }
-        uint PosY { get; set; }
+        int PosX { get; set; }
+        int PosY { get; set; }
     }
 }
