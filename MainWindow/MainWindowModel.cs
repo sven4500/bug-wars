@@ -14,6 +14,8 @@ namespace BugWars
     {
         readonly private Config conf;
 
+        readonly private object bugLock = new object();
+
         readonly private ObservableCollection<Bug> bugsBlue = new ObservableCollection<Bug>();
         public ObservableCollection<Bug> BugsBlue { get { return bugsBlue; } }
 
@@ -40,12 +42,68 @@ namespace BugWars
             }
         }
 
-        public void Update()
+        private IGameObject Eat(Task<IGameObject> antecedent)
         {
-
+            return null;
         }
 
-        // Метод генерирующий список уникальных значений.
+        private IGameObject Pair(Task<IGameObject> before)
+        {
+            return null;
+        }
+
+        private IGameObject Fight(Task<IGameObject> antecedent)
+        {
+            return null;
+        }
+
+        private IGameObject Move(Task<IGameObject> antecedent)
+        {
+            Bug bug = antecedent.Result as Bug;
+            if (bug == null) { return null; }
+            
+            lock (bugLock)
+            {
+
+            }
+
+            return bug;
+        }
+
+        /*private Task<T> AttachPipe<T>(Task<T> antecedent, Func<Task<T>, T> func) where T : class
+        {
+            return antecedent.ContinueWith<T>(func);
+        }*/
+
+        public void Update()
+        {
+            List<Task> tasks = new List<Task>();
+
+            foreach (var bug in bugsBlue)
+            {
+                Task task = Task
+                    .Run(() => { return bug as IGameObject; })
+                    .ContinueWith<IGameObject>(Move)
+                    /*.ContinueWith<IGameObject>(Move)*/;
+                tasks.Add(task);
+            }
+
+            foreach (var bug in bugsRed)
+            {
+                Task task = Task
+                    .Run(() => { return bug as IGameObject; })
+                    .ContinueWith<IGameObject>(Move)
+                    /*.ContinueWith<IGameObject>(Move)*/;
+                tasks.Add(task);
+            }
+
+            // Task.WaitAll()
+            foreach(var task in tasks)
+                task.Wait();
+        }
+
+        // Метод генерирующий список уникальных значений. Необходим для того
+        // чтобы раскидать жуков по произвольным клеткам поля.
         // https://stackoverflow.com/questions/14473321/generating-random-unique-values-c-sharp
         static private List<int> RandomUniqueList(int minValue, int maxValue, int count, Random random)
         {
@@ -73,10 +131,6 @@ namespace BugWars
         {
             var bugs = new ObservableCollection<Bug>();
 
-            // Кок получить произвольное значение из перечисления:
-            // https://stackoverflow.com/questions/3132126/how-do-i-select-a-random-value-from-an-enumeration
-            var sex = Enum.GetValues(typeof(Bug.SexEnum));
-
             for (int i = 0; i < conf.BugCountBlue; ++i)
             {
                 var advanceXSuccess = posX.MoveNext();
@@ -86,11 +140,11 @@ namespace BugWars
                     throw new Exception();
 
                 Bug bug = new Bug();
-
                 bug.PosX = (uint)posX.Current;
                 bug.PosY = (uint)posY.Current;
                 bug.Team = team;
-                bug.Sex = (Bug.SexEnum)sex.GetValue(random.Next(sex.Length));
+                bug.Sex = Bug.GetRandomSex();
+                bug.Direction = Bug.GetRandomDirection();
 
                 bugs.Add(bug);
             }

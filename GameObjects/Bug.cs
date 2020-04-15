@@ -8,15 +8,34 @@ namespace BugWars.GameObjects
 {
     public class Bug : GameObject
     {
+        private static readonly Random random = new Random(Environment.TickCount);
+
+        // Кок получить произвольное значение из перечисления:
+        // https://stackoverflow.com/questions/3132126/how-do-i-select-a-random-value-from-an-enumeration
+        private static Array sex = Enum.GetValues(typeof(Bug.SexEnum));
+        private static Array direction = Enum.GetValues(typeof(Bug.DirectionEnum));
+
         public enum SexEnum { Male = 0, Female = 1 };
         public enum TeamEnum { Red = 0, Blue = 1 };
+        public enum DirectionEnum { Up, Down, Lef, Right };
 
         public TeamEnum Team { get; set; }
         public SexEnum Sex { get; set; }
+        public DirectionEnum Direction { get; set; }
 
         public uint Health { get; set; }
         public uint Speed { get; set; }
         public uint Strength { get; set; }
         public uint Appetite { get; set; }
+
+        public static DirectionEnum GetRandomDirection()
+        {
+            return (Bug.DirectionEnum)direction.GetValue(random.Next(direction.Length));
+        }
+
+        public static SexEnum GetRandomSex()
+        {
+            return (Bug.SexEnum)sex.GetValue(random.Next(sex.Length));
+        }
     }
 }
