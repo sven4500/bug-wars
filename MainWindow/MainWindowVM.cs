@@ -8,6 +8,7 @@ using System.Windows.Controls; // Canvas
 using System.Windows.Threading; // DispatchetTimer
 using System.Windows.Shapes; // Shape
 using System.Windows.Media; // Brushes
+using System.Windows.Media.Imaging; // BitmapImage
 using System.Collections.ObjectModel; // ObservableCollection<>
 using System.ComponentModel; // INotifyPropertyChanged
 using BugWars.GameObjects; // IGameObject, Bug, Egg, Food, ..
@@ -40,6 +41,14 @@ namespace BugWars
 
         private double gridOpacity = 0.1;
         public double GridOpacity { get { return gridOpacity; } set { gridOpacity = (value >= 0.0 && value <= 1.0) ? value : gridOpacity; } }
+
+        // https://stackoverflow.com/questions/13535587/how-to-create-imagebrush-in-c-sharp-code
+        // https://wpf.2000things.com/2014/07/03/1107-accessing-an-embedded-resource-using-a-uri/
+        private readonly ImageBrush bugMaleBlueBrush = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Images/bug-male-blue.png")));
+        private readonly ImageBrush bugFemaleBlueBrush = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Images/bug-female-blue.png")));
+
+        private readonly ImageBrush bugMaleRedBrush = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Images/bug-male-red.png")));
+        private readonly ImageBrush bugFemaleRedBrush = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Images/bug-female-red.png")));
 
         // Таймер который срабатывает 1 раз/сек и обновляет модель игры.
         readonly private DispatcherTimer timer = new DispatcherTimer();
@@ -124,7 +133,9 @@ namespace BugWars
             rect.Width = StepWidth;
             rect.Height = StepHeight;
 
-            rect.Fill = (bug.Team == Bug.TeamEnum.Blue) ? Brushes.Blue : Brushes.Red;
+            rect.Fill = (bug.Team == Bug.TeamEnum.Blue) ?
+                ((bug.Sex == Bug.SexEnum.Male) ? bugMaleBlueBrush : bugFemaleBlueBrush) :
+                ((bug.Sex == Bug.SexEnum.Male) ? bugMaleRedBrush : bugFemaleRedBrush);
 
             return rect;
         }
