@@ -149,14 +149,30 @@ namespace BugWars
             return shape;
         }
 
+        private void AttachGameObjects<T>(IEnumerable<T> list) where T : class
+        {
+            foreach (var obj in list)
+                Shapes.Add(Convert(obj as IGameObject));
+        }
+
+        private void AttachShapes(IEnumerable<Shape> list)
+        {
+            foreach (var obj in list)
+                Shapes.Add(obj);
+        }
+
+        private void UpdateShapes()
+        {
+            Shapes.Clear();
+            AttachShapes(gridLines);
+            AttachGameObjects(model.BugsBlue);
+            AttachGameObjects(model.BugsRed);
+        }
+
         private void Tick(object sender, EventArgs e)
         {
             model.Update();
-
-            Shapes.Clear();
-            gridLines.ToList().ForEach(Shapes.Add);
-            model.BugsBlue.ToList().ForEach(val => { Shapes.Add(Convert(val)); });
-            model.BugsRed.ToList().ForEach(val => { Shapes.Add(Convert(val)); });
+            UpdateShapes();
 
             // Говорим WPF что коллекция объектов для отрисовки изменилась.
             OnPropertyChanged("Shapes");
