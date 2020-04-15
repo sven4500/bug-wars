@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Diagnostics; // Debug.Assert
 using System.Collections.Generic;
 using System.Linq;
@@ -23,27 +24,37 @@ namespace BugWars
         {
             conf = _conf;
 
-            var random = new Random(Environment.TickCount);
-            bugsBlue = ReleaseBugs(Bug.TeamEnum.Blue, random);
-            bugsRed = ReleaseBugs(Bug.TeamEnum.Red, random);
+            {
+                var random = new Random(Environment.TickCount);
+
+                var posX = RandomUniqueList(0, (int)conf.MapWidth, (int)conf.BugCountTotal, random);
+                var teamBluePosX = posX.GetRange(0, (int)conf.BugCountBlue);
+                var teamRedPosX = posX.GetRange((int)conf.BugCountBlue, (int)conf.BugCountRed);
+
+                var posY = RandomUniqueList(0, (int)conf.MapHeight, (int)conf.BugCountTotal, random);
+                var teamBluePosY = posY.GetRange(0, (int)conf.BugCountBlue);
+                var teamRedPosY = posY.GetRange((int)conf.BugCountBlue, (int)conf.BugCountRed);
+
+                bugsBlue = ReleaseBugs(teamBluePosX.GetEnumerator(), teamBluePosY.GetEnumerator(), Bug.TeamEnum.Blue, random);
+                bugsRed = ReleaseBugs(teamRedPosX.GetEnumerator(), teamRedPosY.GetEnumerator(), Bug.TeamEnum.Red, random);
+            }
         }
 
         public void Update()
         {
-            /*BugsBlue[0].PosX++;
-            BugsBlue[0].PosY++;*/
+
         }
 
         // Метод генерирующий список уникальных значений.
         // https://stackoverflow.com/questions/14473321/generating-random-unique-values-c-sharp
-        static private List<int> RandomUniqueList(int minValue, int maxValue, int capacity, Random random)
+        static private List<int> RandomUniqueList(int minValue, int maxValue, int count, Random random)
         {
             Debug.Assert(maxValue >= minValue);
 
-            var list = new List<int>(capacity);
-            int howMuch = Math.Min(Math.Abs(maxValue - minValue), capacity);
+            count = Math.Min(Math.Abs(maxValue - minValue), count);
+            var list = new List<int>(count);
 
-            for (int i = 0; i < howMuch; ++i)
+            for (int i = 0; i < count; ++i)
             {
                 int value = 0;
 
@@ -58,7 +69,7 @@ namespace BugWars
             return list;
         }
 
-        private ObservableCollection<Bug> ReleaseBugs(Bug.TeamEnum team, Random random)
+        private ObservableCollection<Bug> ReleaseBugs(IEnumerator<int> posX, IEnumerator<int> posY, Bug.TeamEnum team, Random random)
         {
             var bugs = new ObservableCollection<Bug>();
 
@@ -66,15 +77,18 @@ namespace BugWars
             // https://stackoverflow.com/questions/3132126/how-do-i-select-a-random-value-from-an-enumeration
             var sex = Enum.GetValues(typeof(Bug.SexEnum));
 
-            var posX = RandomUniqueList(0, (int)conf.MapWidth, (int)conf.BugCountBlue, random);
-            var posY = RandomUniqueList(0, (int)conf.MapHeight, (int)conf.BugCountBlue, random);
-
             for (int i = 0; i < conf.BugCountBlue; ++i)
             {
+                var advanceXSuccess = posX.MoveNext();
+                var advanceYSuccess = posY.MoveNext();
+
+                if (advanceXSuccess == false || advanceYSuccess == false)
+                    throw new Exception();
+
                 Bug bug = new Bug();
 
-                bug.PosX = (uint)posX[i];
-                bug.PosY = (uint)posY[i];
+                bug.PosX = (uint)posX.Current;
+                bug.PosY = (uint)posY.Current;
                 bug.Team = team;
                 bug.Sex = (Bug.SexEnum)sex.GetValue(random.Next(sex.Length));
 
