@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input; // ICommand
 using System.Windows.Controls; // Canvas
 using System.Windows.Threading; // DispatchetTimer
 using System.Windows.Shapes; // Shape
@@ -28,13 +29,26 @@ namespace BugWars
         readonly private Config conf;
 
         private uint canvasWidth = 640;
-        public uint CanvasWidth { get { return canvasWidth; } }
+        public uint CanvasWidth
+        {
+            get { return canvasWidth; }
+        }
 
         private uint canvasHeight = 480;
-        public uint CanvasHeight { get { return canvasHeight; } }
+        public uint CanvasHeight
+        {
+            get { return canvasHeight; }
+        }
 
-        public double StepWidth { get { return (double)CanvasWidth / conf.MapWidth; } }
-        public double StepHeight { get { return (double)CanvasHeight / conf.MapHeight; } }
+        public double StepWidth
+        {
+            get { return (double)CanvasWidth / conf.MapWidth; }
+        }
+
+        public double StepHeight
+        {
+            get { return (double)CanvasHeight / conf.MapHeight; }
+        }
 
         // Здесь относительно того нужна ли команда на ValueChanged событие:
         // https://stackoverflow.com/questions/25138695/how-to-handle-the-slider-valuechanged-event-in-a-view-model
@@ -42,11 +56,15 @@ namespace BugWars
         public double RefreshRate
         {
             get { return refreshRate; }
-            set { refreshRate = value; timer.Interval = new TimeSpan((long)(10000000 * refreshRate)); }
+            set { refreshRate = value; timer.Interval = new TimeSpan((long)(10000000 * refreshRate)); OnPropertyChanged("RefreshRate"); }
         }
 
         private double gridOpacity = 0.1;
-        public double GridOpacity { get { return gridOpacity; } set { gridOpacity = (value >= 0.0 && value <= 1.0) ? value : gridOpacity; } }
+        public double GridOpacity
+        {
+            get { return gridOpacity; }
+            set { gridOpacity = (value >= 0.0 && value <= 1.0) ? value : gridOpacity; }
+        }
 
         // Здесь относительно того как добавить ресурсы в проект:
         // https://stackoverflow.com/questions/13535587/how-to-create-imagebrush-in-c-sharp-code
@@ -57,14 +75,29 @@ namespace BugWars
         private readonly ImageBrush bugMaleRedBrush = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Images/bug-male-red.png")));
         private readonly ImageBrush bugFemaleRedBrush = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Images/bug-female-red.png")));
 
-        // Таймер который срабатывает 1 раз/сек и обновляет модель игры.
-        readonly private DispatcherTimer timer = new DispatcherTimer();
+        // Таймер который обновляет модель игры.
+        readonly private DispatcherTimer timer;
+
+        readonly private ICommand onPauseCommand;
+        public ICommand OnPauseCommand
+        {
+            get { return onPauseCommand; }
+        }
+
+        readonly private ICommand onResumeCommand;
+        public ICommand OnResumeCommand
+        {
+            get { return onResumeCommand; }
+        }
 
         // В этой коллекции находится абсолютно всё что должен нарисовать
         // Canvas. Периодически по таймеру эта коллекция будет обновлятся
         // значениями из модели.
         readonly private ObservableCollection<Shape> shapes = new ObservableCollection<Shape>();
-        public ObservableCollection<Shape> Shapes { get { return shapes; } }
+        public ObservableCollection<Shape> Shapes
+        {
+            get { return shapes; }
+        }
 
         // Коллекция линий для рисования сетки игрового поля. Эта коллекция не
         // будет изменяться во время работы программы.
@@ -108,20 +141,32 @@ namespace BugWars
 
                 gridLines.Add(line);
             }
+
+            onPauseCommand = new DelegateCommand(Pause);
+            onResumeCommand = new DelegateCommand(Start);
+
+            // Пример использования таймера:
+            // https://qna.habr.com/q/76590
+            timer = new DispatcherTimer();
+            timer.Tick += Tick;
+
+            // Нужно явно задать RefreshRate чтобы проинициализировать таймер.
+            RefreshRate = 1.0;
         }
 
         public void Start()
         {
-            // Пример использования таймера:
-            // https://qna.habr.com/q/76590
-            timer.Tick += Tick;
-            timer.Interval = new TimeSpan((long)(10000000 * refreshRate));
+            Start(null);
+        }
+
+        private void Start(object e)
+        {
             timer.Start();
         }
 
-        public void Pause()
+        private void Pause(object e)
         {
-            throw new NotImplementedException();
+            timer.Stop();
         }
 
         private Shape ConvertBug(IGameObject gameObject)

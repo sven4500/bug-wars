@@ -24,11 +24,16 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="8*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="7*"/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Margin="5,0,5,0" Content="Приостановить" VerticalAlignment="Center"/>
-            <Button Grid.Column="1" Margin="5,0,5,0" Content="Продолжить" VerticalAlignment="Center"/>
-            <Slider Grid.Column="2" Margin="5,0,5,0" VerticalAlignment="Center"
+            <Button Grid.Column="0" Margin="5,0,5,0" VerticalAlignment="Center"
+                Content="Остановить" Command="{Binding OnPauseCommand}"/>
+            <Button Grid.Column="1" Margin="5,0,5,0" VerticalAlignment="Center"
+                Content="Продолжить" Command="{Binding OnResumeCommand}"/>
+            <TextBlock Grid.Column="2" Margin="5,0,5,0" VerticalAlignment="Center" HorizontalAlignment="Center"
+                Text="{Binding RefreshRate, Mode=OneWay, StringFormat=x{0:F}}"/>
+            <Slider Grid.Column="3" Margin="5,0,5,0" VerticalAlignment="Center"
                 Value="{Binding RefreshRate}" Minimum="0.01" Maximum="1.5" TickFrequency="0.05"
                 TickPlacement="Both" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="2"/>
         </Grid>
