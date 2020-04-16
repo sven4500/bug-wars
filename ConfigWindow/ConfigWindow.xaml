@@ -60,8 +60,8 @@
                 <TextBox Grid.Row="8" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="10,0,10,0" Text="{Binding Conf.BugSpeedBlue}" IsEnabled="False"/>
                 <TextBox Grid.Row="8" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="10,0,10,0" Text="{Binding Conf.BugSpeedRed}" IsEnabled="False"/>
                 <Label Grid.Row="9" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Скорость поедания"/>
-                <TextBox Grid.Row="9" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="10,0,10,0" Text="{Binding Conf.BugEatRateBlue}" IsEnabled="False"/>
-                <TextBox Grid.Row="9" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="10,0,10,0" Text="{Binding Conf.BugEatRateRed}" IsEnabled="False"/>
+                <TextBox Grid.Row="9" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="10,0,10,0" Text="{Binding Conf.BugAppetiteBlue}" IsEnabled="False"/>
+                <TextBox Grid.Row="9" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="10,0,10,0" Text="{Binding Conf.BugAppetiteRed}" IsEnabled="False"/>
                 <Label Grid.Row="10" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Сила"/>
                 <TextBox Grid.Row="10" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="10,0,10,0" Text="{Binding Conf.BugStrengthBlue}"/>
                 <TextBox Grid.Row="10" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="10,0,10,0" Text="{Binding Conf.BugStrengthRed}"/>

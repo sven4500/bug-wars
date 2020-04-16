@@ -2,19 +2,35 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:BugWars"
-        Title="Войны жуков" Height="300" Width="400">
-
-    <!-- Используем свойство Stretch чтобы растянуть Canvas на полный размер окна. -->
-    <Viewbox Stretch="Fill">
-        <!-- Не понимаю какую роль здесь играет элемент ItemsControl, но вот пример:
-        https://stackoverflow.com/questions/2317713/binding-wpf-canvas-children-to-an-observablecollection -->
-        <ItemsControl ItemsSource="{Binding Path=Shapes, Mode=OneWay}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Canvas Width="{Binding CanvasWidth}" Height="{Binding CanvasHeight}"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-        </ItemsControl>
-    </Viewbox>
-
+        Title="Войны жуков" Height="480" Width="640">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="9*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <!-- Используем свойство Stretch чтобы растянуть Canvas на полный размер окна. -->
+        <Viewbox Grid.Row="0" Stretch="Fill">
+            <!-- Не понимаю какую роль здесь играет элемент ItemsControl, но вот пример:
+            https://stackoverflow.com/questions/2317713/binding-wpf-canvas-children-to-an-observablecollection -->
+            <ItemsControl ItemsSource="{Binding Path=Shapes, Mode=OneWay}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas Width="{Binding CanvasWidth}" Height="{Binding CanvasHeight}"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </Viewbox>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="8*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Margin="5,0,5,0" Content="Приостановить" VerticalAlignment="Center"/>
+            <Button Grid.Column="1" Margin="5,0,5,0" Content="Продолжить" VerticalAlignment="Center"/>
+            <Slider Grid.Column="2" Margin="5,0,5,0" VerticalAlignment="Center"
+                Value="{Binding RefreshRate}" Minimum="0.01" Maximum="1.5" TickFrequency="0.05"
+                TickPlacement="Both" AutoToolTipPlacement="TopLeft" AutoToolTipPrecision="2"/>
+        </Grid>
+    </Grid>
 </Window>

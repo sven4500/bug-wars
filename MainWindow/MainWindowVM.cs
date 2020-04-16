@@ -36,12 +36,19 @@ namespace BugWars
         public double StepWidth { get { return (double)CanvasWidth / conf.MapWidth; } }
         public double StepHeight { get { return (double)CanvasHeight / conf.MapHeight; } }
 
+        // Здесь относительно того нужна ли команда на ValueChanged событие:
+        // https://stackoverflow.com/questions/25138695/how-to-handle-the-slider-valuechanged-event-in-a-view-model
         private double refreshRate = 1.0;
-        public double RefreshRate { get { return refreshRate; } }
+        public double RefreshRate
+        {
+            get { return refreshRate; }
+            set { refreshRate = value; timer.Interval = new TimeSpan((long)(10000000 * refreshRate)); }
+        }
 
         private double gridOpacity = 0.1;
         public double GridOpacity { get { return gridOpacity; } set { gridOpacity = (value >= 0.0 && value <= 1.0) ? value : gridOpacity; } }
 
+        // Здесь относительно того как добавить ресурсы в проект:
         // https://stackoverflow.com/questions/13535587/how-to-create-imagebrush-in-c-sharp-code
         // https://wpf.2000things.com/2014/07/03/1107-accessing-an-embedded-resource-using-a-uri/
         private readonly ImageBrush bugMaleBlueBrush = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Images/bug-male-blue.png")));
