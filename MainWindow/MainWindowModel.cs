@@ -21,14 +21,14 @@ namespace BugWars
         // Элемент синхронизации запрещает изменение положения объектов.
         readonly private object globalLock = new object();
 
-        readonly private ObservableCollection<Bug> bugsBlue = new ObservableCollection<Bug>();
-        public ObservableCollection<Bug> BugsBlue { get { return bugsBlue; } }
+        readonly private List<Bug> bugsBlue = new List<Bug>();
+        public List<Bug> BugsBlue { get { return bugsBlue; } }
 
-        readonly private ObservableCollection<Bug> bugsRed = new ObservableCollection<Bug>();
-        public ObservableCollection<Bug> BugsRed { get { return bugsRed; } }
+        readonly private List<Bug> bugsRed = new List<Bug>();
+        public List<Bug> BugsRed { get { return bugsRed; } }
 
-        readonly private ObservableCollection<Egg> eggs = new ObservableCollection<Egg>();
-        public ObservableCollection<Egg> Eggs { get { return eggs; } }
+        readonly private List<Egg> eggs = new List<Egg>();
+        public List<Egg> Eggs { get { return eggs; } }
 
         public MainWindowModel(Config _conf)
         {
@@ -50,6 +50,11 @@ namespace BugWars
 
         private bool IsCellEmpty(int x, int y)
         {
+            if (x < 0 || y < 0 || x >= conf.MapWidth || y >= conf.MapHeight)
+            {
+                return false;
+            }
+
             // Как захватить несколько объектов:
             // https://stackoverflow.com/questions/5975664/how-to-lock-several-objects
             lock (globalLock)
@@ -89,7 +94,7 @@ namespace BugWars
                 lock (globalLock)
                 {
                     Bug bug = new Bug(egg.PosX, egg.PosY, egg.Team, Bug.GetRandomSex(), (egg.Team == Bug.TeamEnum.Blue) ? conf.BugHealthBlue : conf.BugHealthRed);
-                    eggs.Remove(egg);
+                    egg.DeleteMeLater = true;
                     bugsBlue.Add(bug);
                 }
             }
@@ -154,7 +159,7 @@ namespace BugWars
                 {
                     if (bug.FertilityCounter == 0)
                     {
-                        ObservableCollection<Bug> collection = ((bug.Team == Bug.TeamEnum.Blue) ? BugsBlue : BugsRed);
+                        List<Bug> collection = ((bug.Team == Bug.TeamEnum.Blue) ? BugsBlue : BugsRed);
 
                         var otherBugs =
                             from otherBug in collection
@@ -318,6 +323,12 @@ namespace BugWars
                 tasks.Add(task);
             }
 
+            tasks.ForEach((task) => task.Wait());
+            tasks.Clear();
+
+            bugsBlue.RemoveAll((obj) => obj.DeleteMeLater);
+            bugsRed.RemoveAll((obj) => obj.DeleteMeLater);
+
             foreach (var obj in eggs)
             {
                 var task = Task
@@ -325,9 +336,10 @@ namespace BugWars
                     .ContinueWith<IGameObject>(Hatch);
             }
 
-            // Task.WaitAll()
-            foreach (var task in tasks)
-                task.Wait();
+            tasks.ForEach((task) => task.Wait());
+            tasks.Clear();
+
+            eggs.RemoveAll((obj) => obj.DeleteMeLater);
         }
 
         // Метод генерирующий список уникальных значений. Необходим для того
@@ -355,9 +367,9 @@ namespace BugWars
             return list;
         }
 
-        private ObservableCollection<Bug> ReleaseBugs(IEnumerator<int> posX, IEnumerator<int> posY, Bug.TeamEnum team, Random random)
+        private List<Bug> ReleaseBugs(IEnumerator<int> posX, IEnumerator<int> posY, Bug.TeamEnum team, Random random)
         {
-            var bugs = new ObservableCollection<Bug>();
+            var bugs = new List<Bug>();
 
             for (int i = 0; i < conf.BugCountBlue; ++i)
             {

@@ -13,5 +13,7 @@ namespace BugWars.GameObjects
     {
         int PosX { get; set; }
         int PosY { get; set; }
+
+        bool DeleteMeLater { get; set; }
     }
 }
