@@ -28,6 +28,9 @@ namespace BugWars
         readonly private ObservableCollection<Bug> bugsRed = new ObservableCollection<Bug>();
         public ObservableCollection<Bug> BugsRed { get { return bugsRed; } }
 
+        readonly private ObservableCollection<Egg> eggs = new ObservableCollection<Egg>();
+        public ObservableCollection<Egg> Eggs { get { return eggs; } }
+
         public MainWindowModel(Config _conf)
         {
             conf = _conf;
@@ -46,84 +49,215 @@ namespace BugWars
             }
         }
 
-        private IGameObject Eat(Task<IGameObject> antecedent)
+        private bool IsCellEmpty(int x, int y)
         {
-            return null;
-        }
+            // Как захватить несколько объектов:
+            // https://stackoverflow.com/questions/5975664/how-to-lock-several-objects
+            lock (bugLock)
+            {
+                lock (eggs)
+                {
+                    var enumerator1 =
+                        from obj in BugsBlue
+                        where obj.PosX == x && obj.PosY == y
+                        select obj;
 
-        private IGameObject Pair(Task<IGameObject> before)
-        {
-            return null;
+                    var enumerator2 =
+                        from obj in BugsRed
+                        where obj.PosX == x && obj.PosY == y
+                        select obj;
+
+                    var enumerator3 =
+                        from obj in Eggs
+                        where obj.PosX == x && obj.PosY == y
+                        select obj;
+
+                    return !(enumerator1.Any() || enumerator2.Any() || enumerator3.Any());
+                }
+            }
         }
 
         private IGameObject Fight(Task<IGameObject> antecedent)
         {
-            return null;
+            Bug bug = antecedent.Result as Bug;
+
+            if (bug == null)
+            {
+                return null;
+            }
+
+            lock (bug)
+            {
+                return bug;
+            }
+        }
+
+        private IGameObject Eat(Task<IGameObject> antecedent)
+        {
+            Bug bug = antecedent.Result as Bug;
+
+            if (bug == null)
+            {
+                return null;
+            }
+
+            lock (bug)
+            {
+                if (bug == null || bug.IsAtWar || bug.IsPairing)
+                {
+                    return bug;
+                }
+
+                return bug;
+            }
+        }
+
+        private IGameObject Pair(Task<IGameObject> antecedent)
+        {
+            Bug bug = antecedent.Result as Bug;
+
+            if (bug == null)
+            {
+                return null;
+            }
+
+            // Неважно как мы выходим из lock, объект будет освобождён.
+            // https://stackoverflow.com/questions/9228114/c-sharp-lock-return-continue-break
+            lock (bugLock)
+            {
+                if (bug.IsAtWar || bug.IsEating)
+                {
+                    return bug;
+                }
+
+                if (bug.IsPairing == false)
+                {
+                    if (bug.FertilityCounter == 0)
+                    {
+                        var otherBugs =
+                            from otherBug in ((bug.Team == Bug.TeamEnum.Blue) ? BugsBlue : BugsRed)
+                            where ((otherBug.PosX == bug.PosX + 1 && otherBug.PosY == bug.PosY)
+                                || (otherBug.PosX == bug.PosX - 1 && otherBug.PosY == bug.PosY)
+                                || (otherBug.PosX == bug.PosX && otherBug.PosY == bug.PosY + 1)
+                                || (otherBug.PosX == bug.PosX && otherBug.PosY == bug.PosY - 1))
+                                && otherBug.IsPairing == false
+                                && otherBug.FertilityCounter == 0
+                                && otherBug.Team == bug.Team
+                                && otherBug.Sex != bug.Sex
+                            select otherBug;
+
+                        if (otherBugs.Any())
+                        {
+                            var otherBug = otherBugs.First();
+
+                            Debug.Assert(bug.PairingCounter == 0);
+                            Debug.Assert(bug.FertilityCounter == 0);
+
+                            Debug.Assert(otherBug.PairingCounter == 0);
+                            Debug.Assert(otherBug.FertilityCounter == 0);
+
+                            // TODO: можно сделать конфигурируемым параметром.
+                            otherBug.IsPairing = true;
+                            otherBug.PairingCounter = 5;
+                            otherBug.FertilityCounter = 3;
+
+                            bug.IsPairing = true;
+                            bug.PairingCounter = 5;
+                            bug.FertilityCounter = 3;
+                        }
+                    }
+                    else
+                    {
+                        Debug.Assert(bug.PairingCounter == 0);
+
+                        bug.FertilityCounter--;
+                    }
+                }
+                else
+                {
+                    bug.PairingCounter--;
+
+                    if (bug.PairingCounter == 0)
+                    {
+                        bug.IsPairing = false;
+
+                        if (bug.Sex == Bug.SexEnum.Female)
+                        {
+                            // TODO: поместить на поле яйцо
+                        }
+                    }
+                }
+
+                return bug;
+            }
         }
 
         private IGameObject Move(Task<IGameObject> antecedent)
         {
             Bug bug = antecedent.Result as Bug;
-            if (bug == null) { return null; }
 
-            int desiredX = bug.PosX;
-            int desiredY = bug.PosY;
-
-            if (bug.Direction == Bug.DirectionEnum.Up)
-                --desiredY;
-            else if (bug.Direction == Bug.DirectionEnum.Down)
-                ++desiredY;
-            else if (bug.Direction == Bug.DirectionEnum.Lef)
-                --desiredX;
-            else if (bug.Direction == Bug.DirectionEnum.Right)
-                ++desiredX;
-
-            // Находимся на границе игрового поля. Дальше идти не можем поэтому
-            // выбираем новое случайное направление.
-            if (desiredX < 0 || desiredX >= conf.MapWidth || desiredY < 0 || desiredY >= conf.MapHeight)
+            if (bug == null)
             {
-                bug.Direction = Bug.GetRandomDirection();
-                return bug;
+                return null;
             }
 
-            lock (bugLock)
+            lock (bug)
             {
-                IEnumerable<Bug> blueBugs =
-                    from temp in bugsBlue
-                    where temp.PosX == desiredX && temp.PosY == desiredY
-                    select temp;
+                if (bug.IsAtWar || bug.IsPairing || bug.IsEating)
+                {
+                    return bug;
+                }
 
-                IEnumerable<Bug> redBugs =
-                    from temp in bugsRed
-                    where temp.PosX == desiredX && temp.PosY == desiredY
-                    select temp;
+                int desiredX = bug.PosX;
+                int desiredY = bug.PosY;
+
+                if (bug.Direction == Bug.DirectionEnum.Up)
+                {
+                    --desiredY;
+                }
+                else if (bug.Direction == Bug.DirectionEnum.Down)
+                {
+                    ++desiredY;
+                }
+                else if (bug.Direction == Bug.DirectionEnum.Lef)
+                {
+                    --desiredX;
+                }
+                else if (bug.Direction == Bug.DirectionEnum.Right)
+                {
+                    ++desiredX;
+                }
+
+                // Находимся на границе игрового поля. Дальше идти не можем поэтому
+                // выбираем новое случайное направление.
+                if (desiredX < 0 || desiredX >= conf.MapWidth || desiredY < 0 || desiredY >= conf.MapHeight)
+                {
+                    bug.Direction = Bug.GetRandomDirection();
+                    return bug;
+                }
 
                 // В обоих командах смотрим есть ли такой жук который находится
                 // на желаемом поле. Если да, то меняем направление.
-                if (blueBugs.Any() == false && redBugs.Any() == false)
+                if (IsCellEmpty(desiredX, desiredY))
                 {
                     bug.PosX = desiredX;
                     bug.PosY = desiredY;
+
+                    // Здесь направление жука меняется произвольным образом.
+                    // TODO: можно сделать конфигурируемым параметром.
+                    if (random.Next() % 100 > 60 == true)
+                    {
+                        bug.Direction = Bug.GetRandomDirection();
+                    }
                 }
                 else
                 {
                     bug.Direction = Bug.GetRandomDirection();
                 }
-            }
 
-            // Здесь направление жука меняется произвольным образом.
-            if (random.Next() % 100 > 60 == true)
-            {
-                bug.Direction = Bug.GetRandomDirection();
+                return bug;
             }
-
-            return bug;
         }
-
-        /*private Task<T> AttachPipe<T>(Task<T> antecedent, Func<Task<T>, T> func) where T : class
-        {
-            return antecedent.ContinueWith<T>(func);
-        }*/
 
         public void Update()
         {
@@ -133,8 +267,10 @@ namespace BugWars
             {
                 Task task = Task
                     .Run(() => { return bug as IGameObject; })
-                    .ContinueWith<IGameObject>(Move)
-                    /*.ContinueWith<IGameObject>(Move)*/;
+                    .ContinueWith<IGameObject>(Fight)
+                    .ContinueWith<IGameObject>(Eat)
+                    .ContinueWith<IGameObject>(Pair)
+                    .ContinueWith<IGameObject>(Move);
                 tasks.Add(task);
             }
 
@@ -142,13 +278,15 @@ namespace BugWars
             {
                 Task task = Task
                     .Run(() => { return bug as IGameObject; })
-                    .ContinueWith<IGameObject>(Move)
-                    /*.ContinueWith<IGameObject>(Move)*/;
+                    .ContinueWith<IGameObject>(Fight)
+                    .ContinueWith<IGameObject>(Eat)
+                    .ContinueWith<IGameObject>(Pair)
+                    .ContinueWith<IGameObject>(Move);
                 tasks.Add(task);
             }
 
             // Task.WaitAll()
-            foreach(var task in tasks)
+            foreach (var task in tasks)
                 task.Wait();
         }
 

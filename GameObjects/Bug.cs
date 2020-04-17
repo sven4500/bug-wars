@@ -23,6 +23,25 @@ namespace BugWars.GameObjects
         public SexEnum Sex { get; set; }
         public DirectionEnum Direction { get; set; }
 
+        public bool IsPairing { get; set; }
+
+        private int pairingCounter;
+        public int PairingCounter
+        {
+            get { return pairingCounter; }
+            set { pairingCounter = value > 0 ? value : 0; }
+        }
+
+        private int fertilityCounter;
+        public int FertilityCounter
+        {
+            get { return fertilityCounter; }
+            set { fertilityCounter = value > 0 ? value : 0; }
+        }
+
+        public bool IsAtWar { get; set; }
+        public bool IsEating { get; set; }
+
         public uint Health { get; set; }
         public uint Speed { get; set; }
         public uint Strength { get; set; }
