@@ -78,6 +78,44 @@ namespace BugWars
             }
         }
 
+        private IGameObject GetCellObject(int x, int y)
+        {
+            if (x < 0 || x >= conf.MapWidth || y < 0 || y >= conf.MapHeight)
+            {
+                return null;
+            }
+
+            lock (globalLock)
+            {
+                IEnumerable<IGameObject>[] enumerables = { null, null, null };
+
+                enumerables[0] =
+                    from bug in BugsBlue
+                    where bug.PosX == x && bug.PosY == y
+                    select bug;
+
+                enumerables[1] =
+                    from bug in BugsRed
+                    where bug.PosX == x && bug.PosY == y
+                    select bug;
+
+                enumerables[2] =
+                    from egg in Eggs
+                    where egg.PosX == x && egg.PosY == y
+                    select egg;
+
+                foreach (var enumerabe in enumerables)
+                {
+                    if (enumerabe.Any() == true)
+                    {
+                        return enumerabe.First();
+                    }
+                }
+            }
+
+            return null;
+        }
+
         private IGameObject Hatch(Task<IGameObject> antecedent)
         {
             Egg egg = antecedent.Result as Egg;
@@ -93,7 +131,7 @@ namespace BugWars
             {
                 lock (globalLock)
                 {
-                    Bug bug = new Bug(egg.PosX, egg.PosY, egg.Team, Bug.GetRandomSex(), (egg.Team == Bug.TeamEnum.Blue) ? conf.BugHealthBlue : conf.BugHealthRed);
+                    Bug bug = CreateBug(egg.PosX, egg.PosY, egg.Team, Bug.GetRandomSex());
                     egg.DeleteMeLater = true;
                     bugsBlue.Add(bug);
                 }
@@ -113,6 +151,39 @@ namespace BugWars
 
             lock (globalLock)
             {
+                if (bug.Health <= 0)
+                {
+                    bug.DeleteMeLater = true;
+                    return bug;
+                }
+
+                Bug[] nearestBugs =
+                {
+                    GetCellObject(bug.PosX+1, bug.PosY) as Bug,
+                    GetCellObject(bug.PosX-1, bug.PosY) as Bug,
+                    GetCellObject(bug.PosX, bug.PosY+1) as Bug,
+                    GetCellObject(bug.PosX, bug.PosY-1) as Bug
+                };
+
+                var enemyBugs =
+                    from enemyBug in nearestBugs
+                    where enemyBug != null && enemyBug.Team == bug.EnemyTeam
+                    select enemyBug;
+
+                if (enemyBugs.Any())
+                {
+                    bug.IsAtWar = true;
+
+                    foreach (var enemyBug in enemyBugs)
+                    {
+                        enemyBug.Health -= bug.Strength;
+                    }
+                }
+                else
+                {
+                    bug.IsAtWar = false;
+                }
+
                 return bug;
             }
         }
@@ -293,6 +364,14 @@ namespace BugWars
                     bug.Direction = Bug.GetRandomDirection();
                 }
 
+                // TODO: сделать конфигурируемым
+                bug.Health -= 2;
+
+                if (bug.Health < 0)
+                {
+                    bug.DeleteMeLater = true;
+                }
+
                 return bug;
             }
         }
@@ -367,6 +446,22 @@ namespace BugWars
             return list;
         }
 
+        private Bug CreateBug(int x, int y, Bug.TeamEnum team, Bug.SexEnum sex)
+        {
+            if (team == Bug.TeamEnum.Blue)
+            {
+                return new Bug(x, y, team, sex, conf.BugHealthBlue, conf.BugStrengthBlue);
+            }
+            else if (team == Bug.TeamEnum.Red)
+            {
+                return new Bug(x, y, team, sex, conf.BugHealthRed, conf.BugStrengthRed);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         private List<Bug> ReleaseBugs(IEnumerator<int> posX, IEnumerator<int> posY, Bug.TeamEnum team, Random random)
         {
             var bugs = new List<Bug>();
@@ -379,7 +474,8 @@ namespace BugWars
                 if (advanceXSuccess == false || advanceYSuccess == false)
                     throw new Exception();
 
-                Bug bug = new Bug(posX.Current, posY.Current, team, Bug.GetRandomSex(), 100);
+                Bug bug = CreateBug(posX.Current, posY.Current, team, Bug.GetRandomSex());
+
                 bugs.Add(bug);
             }
 

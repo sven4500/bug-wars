@@ -20,7 +20,11 @@ namespace BugWars.GameObjects
         public enum DirectionEnum { Up, Down, Lef, Right };
 
         public TeamEnum Team { get; set; }
+        public TeamEnum EnemyTeam { get { return Team == TeamEnum.Blue ? TeamEnum.Red : TeamEnum.Blue; } }
+
         public SexEnum Sex { get; set; }
+        public SexEnum OppositeSex { get { return Sex == SexEnum.Male ? SexEnum.Female : SexEnum.Male; } }
+
         public DirectionEnum Direction { get; set; }
 
         public bool IsPairing { get; set; }
@@ -42,18 +46,19 @@ namespace BugWars.GameObjects
         public bool IsAtWar { get; set; }
         public bool IsEating { get; set; }
 
-        public uint Health { get; set; }
+        public int Health { get; set; }
         public uint Speed { get; set; }
-        public uint Strength { get; set; }
+        public int Strength { get; set; }
         public uint Appetite { get; set; }
 
-        public Bug(int x, int y, Bug.TeamEnum team, Bug.SexEnum sex, uint health)
+        public Bug(int x, int y, Bug.TeamEnum team, Bug.SexEnum sex, int health, int strength)
         {
             PosX = x;
             PosY = y;
             Team = team;
             Sex = sex;
             Health = health;
+            Strength = strength;
 
             IsAtWar = false;
             IsEating = false;

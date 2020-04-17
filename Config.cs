@@ -31,8 +31,8 @@ namespace BugWars
         public uint BugCountBlue { get; set; }
         public uint BugCountRed { get; set; }
 
-        public uint BugHealthBlue { get; set; }
-        public uint BugHealthRed { get; set; }
+        public int BugHealthBlue { get; set; }
+        public int BugHealthRed { get; set; }
 
         public uint BugSpeedBlue { get; set; }
         public uint BugSpeedRed { get; set; }
@@ -40,7 +40,7 @@ namespace BugWars
         public uint BugAppetiteBlue { get; set; }
         public uint BugAppetiteRed { get; set; }
 
-        public uint BugStrengthBlue { get; set; }
-        public uint BugStrengthRed { get; set; }
+        public int BugStrengthBlue { get; set; }
+        public int BugStrengthRed { get; set; }
     }
 }
