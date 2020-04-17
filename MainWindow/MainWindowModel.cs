@@ -73,6 +73,30 @@ namespace BugWars
             }
         }
 
+        private IGameObject Hatch(Task<IGameObject> antecedent)
+        {
+            Egg egg = antecedent.Result as Egg;
+
+            if(egg == null)
+            {
+                return null;
+            }
+
+            egg.HatchCounter--;
+
+            if (egg.HatchCounter == 0)
+            {
+                lock (globalLock)
+                {
+                    Bug bug = new Bug(egg.PosX, egg.PosY, egg.Team, Bug.GetRandomSex(), (egg.Team == Bug.TeamEnum.Blue) ? conf.BugHealthBlue : conf.BugHealthRed);
+                    eggs.Remove(egg);
+                    bugsBlue.Add(bug);
+                }
+            }
+
+            return egg;
+        }
+
         private IGameObject Fight(Task<IGameObject> antecedent)
         {
             Bug bug = antecedent.Result as Bug;
@@ -188,13 +212,9 @@ namespace BugWars
                             {
                                 if (IsCellEmpty(desiredX[i], desiredY[i]) == true)
                                 {
-                                    Egg egg = new Egg();
-
-                                    egg.PosX = desiredX[i];
-                                    egg.PosY = desiredY[i];
-                                    egg.Team = bug.Team;
-
+                                    Egg egg = new Egg(desiredX[i], desiredY[i], bug.Team, 3);
                                     eggs.Add(egg);
+                                    break;
                                 }
                             }
                         }
@@ -298,6 +318,13 @@ namespace BugWars
                 tasks.Add(task);
             }
 
+            foreach (var obj in eggs)
+            {
+                var task = Task
+                    .Run(() => { return obj as IGameObject; })
+                    .ContinueWith<IGameObject>(Hatch);
+            }
+
             // Task.WaitAll()
             foreach (var task in tasks)
                 task.Wait();
@@ -340,13 +367,7 @@ namespace BugWars
                 if (advanceXSuccess == false || advanceYSuccess == false)
                     throw new Exception();
 
-                Bug bug = new Bug();
-                bug.PosX = posX.Current;
-                bug.PosY = posY.Current;
-                bug.Team = team;
-                bug.Sex = Bug.GetRandomSex();
-                bug.Direction = Bug.GetRandomDirection();
-
+                Bug bug = new Bug(posX.Current, posY.Current, team, Bug.GetRandomSex(), 100);
                 bugs.Add(bug);
             }
 

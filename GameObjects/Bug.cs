@@ -47,6 +47,20 @@ namespace BugWars.GameObjects
         public uint Strength { get; set; }
         public uint Appetite { get; set; }
 
+        public Bug(int x, int y, Bug.TeamEnum team, Bug.SexEnum sex, uint health)
+        {
+            PosX = x;
+            PosY = y;
+            Team = team;
+            Sex = sex;
+            Health = health;
+
+            IsAtWar = false;
+            IsEating = false;
+            IsPairing = false;
+            Direction = Bug.GetRandomDirection();
+        }
+
         public static DirectionEnum GetRandomDirection()
         {
             return (Bug.DirectionEnum)direction.GetValue(random.Next(direction.Length));
