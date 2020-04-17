@@ -188,7 +188,13 @@ namespace BugWars
                             {
                                 if (IsCellEmpty(desiredX[i], desiredY[i]) == true)
                                 {
-                                    // TODO: ставим яйцо на свободную клетку
+                                    Egg egg = new Egg();
+
+                                    egg.PosX = desiredX[i];
+                                    egg.PosY = desiredY[i];
+                                    egg.Team = bug.Team;
+
+                                    eggs.Add(egg);
                                 }
                             }
                         }

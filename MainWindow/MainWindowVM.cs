@@ -75,6 +75,11 @@ namespace BugWars
         private readonly ImageBrush bugMaleRedBrush = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Images/bug-male-red.png")));
         private readonly ImageBrush bugFemaleRedBrush = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Images/bug-female-red.png")));
 
+        private readonly ImageBrush eggBlueBrush = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Images/egg-blue.png")));
+        private readonly ImageBrush eggRedBrush = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Images/egg-red.png")));
+
+        private readonly ImageBrush crumbsBrush = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Images/crumbs.png")));
+
         // Таймер который обновляет модель игры.
         readonly private DispatcherTimer timer;
 
@@ -172,8 +177,11 @@ namespace BugWars
         private Shape ConvertBug(IGameObject gameObject)
         {
             Bug bug = gameObject as Bug;
+
             if (bug == null)
+            {
                 return null;
+            }
 
             Shape rect = new Rectangle();
 
@@ -192,6 +200,30 @@ namespace BugWars
             return rect;
         }
 
+        private Shape ConvertEgg(IGameObject gameObject)
+        {
+            Egg egg = gameObject as Egg;
+
+            if (egg == null)
+            {
+                return null;
+            }
+
+            Shape rect = new Rectangle();
+
+            rect.SetValue(Canvas.LeftProperty, egg.PosX * StepWidth);
+            rect.SetValue(Canvas.TopProperty, egg.PosY * StepHeight);
+
+            rect.Width = StepWidth;
+            rect.Height = StepHeight;
+
+            rect.Fill = (egg.Team == Bug.TeamEnum.Blue) ?
+                (eggBlueBrush) :
+                (eggRedBrush);
+
+            return rect;
+        }
+
         private Shape Convert(IGameObject gameObject)
         {
             Shape shape = null;
@@ -203,6 +235,10 @@ namespace BugWars
             else if (gameObject as Bug != null)
             {
                 shape = ConvertBug(gameObject);
+            }
+            else if (gameObject as Egg != null)
+            {
+                shape = ConvertEgg(gameObject);
             }
             else
             {
@@ -230,6 +266,7 @@ namespace BugWars
             AttachShapes(gridLines);
             AttachGameObjects(model.BugsBlue);
             AttachGameObjects(model.BugsRed);
+            AttachGameObjects(model.Eggs);
         }
 
         private void Tick(object sender, EventArgs e)

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace BugWars.GameObjects
 {
-    /*public class Egg : IGameObject
-    { }*/
+    public class Egg : GameObject
+    {
+        public Bug.TeamEnum Team { get; set; }
+    }
 }
