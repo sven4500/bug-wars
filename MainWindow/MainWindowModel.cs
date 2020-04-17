@@ -18,9 +18,8 @@ namespace BugWars
         // по игровому полю в произвольном порядке.
         readonly private Random random = new Random(Environment.TickCount);
 
-        // Так как коллекции жуков две (синяя комманда и красная комманда), то
-        // создаём один общий элемент синхронизации.
-        readonly private object bugLock = new object();
+        // Элемент синхронизации запрещает изменение положения объектов.
+        readonly private object globalLock = new object();
 
         readonly private ObservableCollection<Bug> bugsBlue = new ObservableCollection<Bug>();
         public ObservableCollection<Bug> BugsBlue { get { return bugsBlue; } }
@@ -53,27 +52,24 @@ namespace BugWars
         {
             // Как захватить несколько объектов:
             // https://stackoverflow.com/questions/5975664/how-to-lock-several-objects
-            lock (bugLock)
+            lock (globalLock)
             {
-                lock (eggs)
-                {
-                    var enumerator1 =
-                        from obj in BugsBlue
-                        where obj.PosX == x && obj.PosY == y
-                        select obj;
+                var enumerator1 =
+                    from obj in BugsBlue
+                    where obj.PosX == x && obj.PosY == y
+                    select obj;
 
-                    var enumerator2 =
-                        from obj in BugsRed
-                        where obj.PosX == x && obj.PosY == y
-                        select obj;
+                var enumerator2 =
+                    from obj in BugsRed
+                    where obj.PosX == x && obj.PosY == y
+                    select obj;
 
-                    var enumerator3 =
-                        from obj in Eggs
-                        where obj.PosX == x && obj.PosY == y
-                        select obj;
+                var enumerator3 =
+                    from obj in Eggs
+                    where obj.PosX == x && obj.PosY == y
+                    select obj;
 
-                    return !(enumerator1.Any() || enumerator2.Any() || enumerator3.Any());
-                }
+                return !(enumerator1.Any() || enumerator2.Any() || enumerator3.Any());
             }
         }
 
@@ -86,7 +82,7 @@ namespace BugWars
                 return null;
             }
 
-            lock (bug)
+            lock (globalLock)
             {
                 return bug;
             }
@@ -101,7 +97,7 @@ namespace BugWars
                 return null;
             }
 
-            lock (bug)
+            lock (globalLock)
             {
                 if (bug == null || bug.IsAtWar || bug.IsPairing)
                 {
@@ -123,7 +119,7 @@ namespace BugWars
 
             // Неважно как мы выходим из lock, объект будет освобождён.
             // https://stackoverflow.com/questions/9228114/c-sharp-lock-return-continue-break
-            lock (bugLock)
+            lock (globalLock)
             {
                 if (bug.IsAtWar || bug.IsEating)
                 {
@@ -134,8 +130,10 @@ namespace BugWars
                 {
                     if (bug.FertilityCounter == 0)
                     {
+                        ObservableCollection<Bug> collection = ((bug.Team == Bug.TeamEnum.Blue) ? BugsBlue : BugsRed);
+
                         var otherBugs =
-                            from otherBug in ((bug.Team == Bug.TeamEnum.Blue) ? BugsBlue : BugsRed)
+                            from otherBug in collection
                             where ((otherBug.PosX == bug.PosX + 1 && otherBug.PosY == bug.PosY)
                                 || (otherBug.PosX == bug.PosX - 1 && otherBug.PosY == bug.PosY)
                                 || (otherBug.PosX == bug.PosX && otherBug.PosY == bug.PosY + 1)
@@ -183,7 +181,16 @@ namespace BugWars
 
                         if (bug.Sex == Bug.SexEnum.Female)
                         {
-                            // TODO: поместить на поле яйцо
+                            int[] desiredX = { bug.PosX + 1, bug.PosX - 1, bug.PosX, bug.PosY };
+                            int[] desiredY = { bug.PosY, bug.PosY, bug.PosY + 1, bug.PosY - 1 };
+
+                            for (int i = 0; i < 4; ++i)
+                            {
+                                if (IsCellEmpty(desiredX[i], desiredY[i]) == true)
+                                {
+                                    // TODO: ставим яйцо на свободную клетку
+                                }
+                            }
                         }
                     }
                 }
@@ -201,7 +208,7 @@ namespace BugWars
                 return null;
             }
 
-            lock (bug)
+            lock (globalLock)
             {
                 if (bug.IsAtWar || bug.IsPairing || bug.IsEating)
                 {
