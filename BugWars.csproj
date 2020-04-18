@@ -76,7 +76,7 @@
   <ItemGroup>
     <Compile Include="ConfigWindow\ConfigWindowVM.cs" />
     <Compile Include="GameObjects\Egg.cs" />
-    <Compile Include="GameObjects\Food.cs" />
+    <Compile Include="GameObjects\Crumbs.cs" />
     <Compile Include="GameObjects\GameObject.cs" />
     <Compile Include="GameObjects\IGameObject.cs" />
     <Compile Include="MainWindow\MainWindow.xaml.cs">

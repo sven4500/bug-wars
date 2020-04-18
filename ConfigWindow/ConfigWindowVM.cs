@@ -16,22 +16,24 @@ namespace BugWars
         {
             MapWidth = 40,
             MapHeight = 30,
-            FeedRate = 0,
+            FeedRate = 10,
+            CrumbEnergy = 35,
+            ToxicHit = 10,
             BugCountBlue = 10,
             BugCountRed = 10,
             BugHealthBlue = 100,
             BugHealthRed = 100,
             BugSpeedBlue = 1,
             BugSpeedRed = 1,
-            BugAppetiteBlue = 1,
-            BugAppetiteRed = 1,
+            BugAppetiteBlue = 5,
+            BugAppetiteRed = 5,
             BugStrengthBlue = 3,
             BugStrengthRed = 3
         };
         public Config Conf { get { return conf; } }
 
-        public uint MapWidth { get { return Conf.MapWidth; } set { if (value <= maxDim) Conf.MapWidth = value; } }
-        public uint MapHeight { get { return Conf.MapHeight; } set { if (value <= maxDim) Conf.MapHeight = value; } }
+        public int MapWidth { get { return Conf.MapWidth; } set { if (value <= maxDim) Conf.MapWidth = value; } }
+        public int MapHeight { get { return Conf.MapHeight; } set { if (value <= maxDim) Conf.MapHeight = value; } }
 
         readonly private ICommand playButtonCommand;
         public ICommand PlayButtonCommand

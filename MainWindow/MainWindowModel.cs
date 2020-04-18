@@ -22,60 +22,55 @@ namespace BugWars
         readonly private object globalLock = new object();
 
         readonly private List<Bug> bugsBlue = new List<Bug>();
-        public List<Bug> BugsBlue { get { return bugsBlue; } }
+        public List<Bug> BugsBlue
+        {
+            get { return bugsBlue; }
+        }
 
         readonly private List<Bug> bugsRed = new List<Bug>();
-        public List<Bug> BugsRed { get { return bugsRed; } }
+        public List<Bug> BugsRed
+        {
+            get { return bugsRed; }
+        }
 
         readonly private List<Egg> eggs = new List<Egg>();
-        public List<Egg> Eggs { get { return eggs; } }
+        public List<Egg> Eggs
+        {
+            get { return eggs; }
+        }
+
+        readonly private List<Crumbs> crumbs = new List<Crumbs>();
+        public List<Crumbs> Crumbs
+        {
+            get { return crumbs; }
+        }
+
+        private int feedRateSpin;
 
         public MainWindowModel(Config _conf)
         {
             conf = _conf;
 
-            {
-                var posX = RandomUniqueList(0, (int)conf.MapWidth, (int)conf.BugCountTotal, random);
-                var teamBluePosX = posX.GetRange(0, (int)conf.BugCountBlue);
-                var teamRedPosX = posX.GetRange((int)conf.BugCountBlue, (int)conf.BugCountRed);
+            feedRateSpin = conf.FeedRate;
 
-                var posY = RandomUniqueList(0, (int)conf.MapHeight, (int)conf.BugCountTotal, random);
-                var teamBluePosY = posY.GetRange(0, (int)conf.BugCountBlue);
-                var teamRedPosY = posY.GetRange((int)conf.BugCountBlue, (int)conf.BugCountRed);
+            // TODO: здесь явная ошибка. Исправь позже. posX и posY генерируют
+            // уникальные значения хотя это не требуется. Нужно чтобы точка
+            // была уникальной.
+            var posX = RandomUniqueList(0, (int)conf.MapWidth, (int)conf.BugCountTotal, random);
+            var teamBluePosX = posX.GetRange(0, (int)conf.BugCountBlue);
+            var teamRedPosX = posX.GetRange((int)conf.BugCountBlue, (int)conf.BugCountRed);
 
-                bugsBlue = ReleaseBugs(teamBluePosX.GetEnumerator(), teamBluePosY.GetEnumerator(), Bug.TeamEnum.Blue, random);
-                bugsRed = ReleaseBugs(teamRedPosX.GetEnumerator(), teamRedPosY.GetEnumerator(), Bug.TeamEnum.Red, random);
-            }
+            var posY = RandomUniqueList(0, (int)conf.MapHeight, (int)conf.BugCountTotal, random);
+            var teamBluePosY = posY.GetRange(0, (int)conf.BugCountBlue);
+            var teamRedPosY = posY.GetRange((int)conf.BugCountBlue, (int)conf.BugCountRed);
+
+            bugsBlue = ReleaseBugs(teamBluePosX.GetEnumerator(), teamBluePosY.GetEnumerator(), Bug.TeamEnum.Blue, random);
+            bugsRed = ReleaseBugs(teamRedPosX.GetEnumerator(), teamRedPosY.GetEnumerator(), Bug.TeamEnum.Red, random);
         }
 
         private bool IsCellEmpty(int x, int y)
         {
-            if (x < 0 || y < 0 || x >= conf.MapWidth || y >= conf.MapHeight)
-            {
-                return false;
-            }
-
-            // Как захватить несколько объектов:
-            // https://stackoverflow.com/questions/5975664/how-to-lock-several-objects
-            lock (globalLock)
-            {
-                var enumerator1 =
-                    from obj in BugsBlue
-                    where obj.PosX == x && obj.PosY == y
-                    select obj;
-
-                var enumerator2 =
-                    from obj in BugsRed
-                    where obj.PosX == x && obj.PosY == y
-                    select obj;
-
-                var enumerator3 =
-                    from obj in Eggs
-                    where obj.PosX == x && obj.PosY == y
-                    select obj;
-
-                return !(enumerator1.Any() || enumerator2.Any() || enumerator3.Any());
-            }
+            return GetCellObject(x, y) == null;
         }
 
         private IGameObject GetCellObject(int x, int y)
@@ -87,7 +82,7 @@ namespace BugWars
 
             lock (globalLock)
             {
-                IEnumerable<IGameObject>[] enumerables = { null, null, null };
+                IEnumerable<IGameObject>[] enumerables = { null, null, null, null };
 
                 enumerables[0] =
                     from bug in BugsBlue
@@ -103,6 +98,11 @@ namespace BugWars
                     from egg in Eggs
                     where egg.PosX == x && egg.PosY == y
                     select egg;
+
+                enumerables[3] =
+                    from crumb in Crumbs
+                    where crumb.PosX == x && crumb.PosY == y
+                    select crumb;
 
                 foreach (var enumerabe in enumerables)
                 {
@@ -376,6 +376,21 @@ namespace BugWars
             }
         }
 
+        private void AddCrumb()
+        {
+            lock (globalLock)
+            {
+                int desiredX = random.Next() % conf.MapWidth;
+                int desiredY = random.Next() % conf.MapHeight;
+
+                if (IsCellEmpty(desiredX, desiredY))
+                {
+                    Crumbs crumb = new Crumbs(desiredX, desiredY, conf.CrumbEnergy);
+                    crumbs.Add(crumb);
+                }
+            }
+        }
+
         public void Update()
         {
             List<Task> tasks = new List<Task>();
@@ -419,6 +434,16 @@ namespace BugWars
             tasks.Clear();
 
             eggs.RemoveAll((obj) => obj.DeleteMeLater);
+
+            feedRateSpin--;
+
+            if (feedRateSpin <= 0)
+            {
+                AddCrumb();
+                feedRateSpin = conf.FeedRate;
+            }
+
+            crumbs.RemoveAll((crumb) => crumb.DeleteMeLater);
         }
 
         // Метод генерирующий список уникальных значений. Необходим для того

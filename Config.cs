@@ -18,15 +18,18 @@ namespace BugWars
             get { return BugCountRed + BugCountBlue; }
         }
 
-        public uint MapSize
+        public int MapSize
         {
             get { return MapWidth * MapHeight; }
         }
 
-        public uint MapWidth { get; set; }
-        public uint MapHeight { get; set; }
+        public int ToxicHit { get; set; }
 
-        public uint FeedRate { get; set; }
+        public int MapWidth { get; set; }
+        public int MapHeight { get; set; }
+
+        public int FeedRate { get; set; }
+        public int CrumbEnergy { get; set; }
 
         public uint BugCountBlue { get; set; }
         public uint BugCountRed { get; set; }

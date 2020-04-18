@@ -224,6 +224,28 @@ namespace BugWars
             return rect;
         }
 
+        private Shape ConvertCrumb(IGameObject gameObject)
+        {
+            Crumbs crumb = gameObject as Crumbs;
+
+            if (crumb == null)
+            {
+                return null;
+            }
+
+            Shape shape = new Rectangle();
+
+            shape.SetValue(Canvas.LeftProperty, crumb.PosX * StepWidth);
+            shape.SetValue(Canvas.TopProperty, crumb.PosY * StepHeight);
+
+            shape.Width = StepWidth;
+            shape.Height = StepHeight;
+
+            shape.Fill = crumbsBrush;
+
+            return shape;
+        }
+
         private Shape Convert(IGameObject gameObject)
         {
             Shape shape = null;
@@ -239,6 +261,10 @@ namespace BugWars
             else if (gameObject as Egg != null)
             {
                 shape = ConvertEgg(gameObject);
+            }
+            else if (gameObject as Crumbs != null)
+            {
+                shape = ConvertCrumb(gameObject);
             }
             else
             {
@@ -267,6 +293,7 @@ namespace BugWars
             AttachGameObjects(model.BugsBlue);
             AttachGameObjects(model.BugsRed);
             AttachGameObjects(model.Eggs);
+            AttachGameObjects(model.Crumbs);
         }
 
         private void Tick(object sender, EventArgs e)
