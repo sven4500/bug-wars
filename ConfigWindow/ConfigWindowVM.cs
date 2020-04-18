@@ -19,6 +19,7 @@ namespace BugWars
             FeedRate = 10,
             CrumbEnergy = 35,
             ToxicHit = 10,
+            ChangeDirectionChance = 70,
             BugCountBlue = 10,
             BugCountRed = 10,
             BugHealthBlue = 100,

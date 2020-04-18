@@ -27,8 +27,6 @@ namespace BugWars.GameObjects
 
         public DirectionEnum Direction { get; set; }
 
-        public bool IsPairing { get; set; }
-
         private int pairingCounter;
         public int PairingCounter
         {
@@ -43,7 +41,26 @@ namespace BugWars.GameObjects
             set { fertilityCounter = value > 0 ? value : 0; }
         }
 
-        public bool IsAtWar { get; set; }
+        private bool isAtWar;
+        public bool IsAtWar {
+            get
+            {
+                return isAtWar;
+            }
+
+            set
+            {
+                isAtWar = value;
+
+                if (isAtWar)
+                {
+                    IsEating = false;
+                    IsPairing = false;
+                }
+            }
+        }
+
+        public bool IsPairing { get; set; }
         public bool IsEating { get; set; }
 
         private int health;

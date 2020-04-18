@@ -23,6 +23,7 @@
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
@@ -52,44 +53,48 @@
                     Content="Токсичность среды"/>
             <TextBox Grid.Row="5" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center"
                     Text="{Binding Conf.ToxicHit}"/>
-            <Label Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center"
+            <Label Grid.Row="6" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"
+                    Content="Вероятность направления"/>
+            <TextBox Grid.Row="6" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                    Text="{Binding Conf.ChangeDirectionChance}"/>
+            <Label Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center"
                     Content="Настройки команд"/>
             <!-- Добавляем цветные прямоугольники чтобы дополнительные сгруппировать настройки команд. -->
-            <Rectangle Grid.Column="1" Grid.Row="7" Grid.RowSpan="5"
+            <Rectangle Grid.Row="8" Grid.Column="1" Grid.RowSpan="5"
                     Fill="#1f00a2e8"/>
-            <Rectangle Grid.Column="2" Grid.Row="7" Grid.RowSpan="5"
+            <Rectangle Grid.Row="8" Grid.Column="2" Grid.RowSpan="5"
                     Fill="#1fed1c23"/>
-            <Label Grid.Row="7" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left"
-                    Content="Количество жуков"/>
-            <TextBox Grid.Row="7" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch"
-                    Text="{Binding Conf.BugCountBlue}"/>
-            <TextBox Grid.Row="7" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch"
-                    Text="{Binding Conf.BugCountRed}"/>
             <Label Grid.Row="8" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left"
-                    Content="Количество жизней"/>
+                    Content="Количество жуков"/>
             <TextBox Grid.Row="8" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch"
-                    Text="{Binding Conf.BugHealthBlue}"/>
+                    Text="{Binding Conf.BugCountBlue}"/>
             <TextBox Grid.Row="8" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch"
-                    Text="{Binding Conf.BugHealthRed}"/>
+                    Text="{Binding Conf.BugCountRed}"/>
             <Label Grid.Row="9" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left"
-                    Content="Скорость передвижения"/>
+                    Content="Количество жизней"/>
             <TextBox Grid.Row="9" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch"
-                    Text="{Binding Conf.BugSpeedBlue}" IsEnabled="False"/>
+                    Text="{Binding Conf.BugHealthBlue}"/>
             <TextBox Grid.Row="9" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch"
-                    Text="{Binding Conf.BugSpeedRed}" IsEnabled="False"/>
+                    Text="{Binding Conf.BugHealthRed}"/>
             <Label Grid.Row="10" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left"
-                    Content="Скорость поедания"/>
+                    Content="Скорость передвижения"/>
             <TextBox Grid.Row="10" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch"
-                    Text="{Binding Conf.BugAppetiteBlue}"/>
+                    Text="{Binding Conf.BugSpeedBlue}" IsEnabled="False"/>
             <TextBox Grid.Row="10" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch"
-                    Text="{Binding Conf.BugAppetiteRed}"/>
+                    Text="{Binding Conf.BugSpeedRed}" IsEnabled="False"/>
             <Label Grid.Row="11" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left"
-                    Content="Сила"/>
+                    Content="Скорость поедания"/>
             <TextBox Grid.Row="11" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch"
-                    Text="{Binding Conf.BugStrengthBlue}"/>
+                    Text="{Binding Conf.BugAppetiteBlue}"/>
             <TextBox Grid.Row="11" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                    Text="{Binding Conf.BugAppetiteRed}"/>
+            <Label Grid.Row="12" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left"
+                    Content="Сила"/>
+            <TextBox Grid.Row="12" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                    Text="{Binding Conf.BugStrengthBlue}"/>
+            <TextBox Grid.Row="12" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch"
                     Text="{Binding Conf.BugStrengthRed}"/>
-            <Button Grid.Row="12" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center"
+            <Button Grid.Row="13" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center"
                 Content="Играть!" Command="{Binding PlayButtonCommand}" IsEnabled="{Binding Conf.IsValid, Mode=OneWay}"/>
         </Grid>
     </ScrollViewer>

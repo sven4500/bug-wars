@@ -23,6 +23,8 @@ namespace BugWars
             get { return MapWidth * MapHeight; }
         }
 
+        public int ChangeDirectionChance { get; set; }
+
         public int ToxicHit { get; set; }
 
         public int MapWidth { get; set; }

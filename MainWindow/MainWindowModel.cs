@@ -365,24 +365,12 @@ namespace BugWars
                     ++desiredX;
                 }
 
-                // Находимся на границе игрового поля. Дальше идти не можем поэтому
-                // выбираем новое случайное направление.
-                if (desiredX < 0 || desiredX >= conf.MapWidth || desiredY < 0 || desiredY >= conf.MapHeight)
-                {
-                    bug.Direction = Bug.GetRandomDirection();
-                    return bug;
-                }
-
-                // В обоих командах смотрим есть ли такой жук который находится
-                // на желаемом поле. Если да, то меняем направление.
                 if (IsCellEmpty(desiredX, desiredY))
                 {
                     bug.PosX = desiredX;
                     bug.PosY = desiredY;
 
-                    // Здесь направление жука меняется произвольным образом.
-                    // TODO: можно сделать конфигурируемым параметром.
-                    if (random.Next() % 100 > 60 == true)
+                    if (random.Next() % 100 > 100 - conf.ChangeDirectionChance)
                     {
                         bug.Direction = Bug.GetRandomDirection();
                     }
