@@ -8,9 +8,8 @@ namespace BugWars.GameObjects
 {
     public class Crumbs : GameObject
     {
-        int energy;
-
-        int Energy
+        private int energy;
+        public int Energy
         {
             get
             {
@@ -20,8 +19,16 @@ namespace BugWars.GameObjects
             set
             {
                 energy = value;
+
                 if (value <= 0)
+                {
+                    energy = 0;
                     DeleteMeLater = true;
+                }
+                else
+                {
+                    DeleteMeLater = false;
+                }
             }
         }
 

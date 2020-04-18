@@ -80,40 +80,54 @@ namespace BugWars
                 return null;
             }
 
-            lock (globalLock)
+            IEnumerable<IGameObject>[] enumerables = { null, null, null, null };
+
+            enumerables[0] =
+                from bug in BugsBlue
+                where bug.PosX == x && bug.PosY == y
+                select bug;
+
+            enumerables[1] =
+                from bug in BugsRed
+                where bug.PosX == x && bug.PosY == y
+                select bug;
+
+            enumerables[2] =
+                from egg in Eggs
+                where egg.PosX == x && egg.PosY == y
+                select egg;
+
+            enumerables[3] =
+                from crumb in Crumbs
+                where crumb.PosX == x && crumb.PosY == y
+                select crumb;
+
+            foreach (var enumerabe in enumerables)
             {
-                IEnumerable<IGameObject>[] enumerables = { null, null, null, null };
-
-                enumerables[0] =
-                    from bug in BugsBlue
-                    where bug.PosX == x && bug.PosY == y
-                    select bug;
-
-                enumerables[1] =
-                    from bug in BugsRed
-                    where bug.PosX == x && bug.PosY == y
-                    select bug;
-
-                enumerables[2] =
-                    from egg in Eggs
-                    where egg.PosX == x && egg.PosY == y
-                    select egg;
-
-                enumerables[3] =
-                    from crumb in Crumbs
-                    where crumb.PosX == x && crumb.PosY == y
-                    select crumb;
-
-                foreach (var enumerabe in enumerables)
+                if (enumerabe.Any())
                 {
-                    if (enumerabe.Any() == true)
-                    {
-                        return enumerabe.First();
-                    }
+                    return enumerabe.First();
                 }
             }
 
             return null;
+        }
+
+        private IGameObject[] GetNearestObjects(IGameObject gameObject)
+        {
+            IGameObject[] nearestObjects = { null, null, null, null };
+
+            if (gameObject == null)
+            {
+                return nearestObjects;
+            }
+
+            nearestObjects[0] = GetCellObject(gameObject.PosX + 1, gameObject.PosY);
+            nearestObjects[1] = GetCellObject(gameObject.PosX - 1, gameObject.PosY);
+            nearestObjects[2] = GetCellObject(gameObject.PosX, gameObject.PosY + 1);
+            nearestObjects[3] = GetCellObject(gameObject.PosX, gameObject.PosY - 1);
+
+            return nearestObjects;
         }
 
         private IGameObject Hatch(Task<IGameObject> antecedent)
@@ -125,14 +139,13 @@ namespace BugWars
                 return null;
             }
 
-            egg.HatchCounter--;
+            egg.HatchCounter -= 1;
 
-            if (egg.HatchCounter == 0)
+            if (egg.IsHatching)
             {
                 lock (globalLock)
                 {
                     Bug bug = CreateBug(egg.PosX, egg.PosY, egg.Team, Bug.GetRandomSex());
-                    egg.DeleteMeLater = true;
                     bugsBlue.Add(bug);
                 }
             }
@@ -151,22 +164,16 @@ namespace BugWars
 
             lock (globalLock)
             {
-                if (bug.Health <= 0)
+                if (bug.IsDead)
                 {
-                    bug.DeleteMeLater = true;
                     return bug;
                 }
 
-                Bug[] nearestBugs =
-                {
-                    GetCellObject(bug.PosX+1, bug.PosY) as Bug,
-                    GetCellObject(bug.PosX-1, bug.PosY) as Bug,
-                    GetCellObject(bug.PosX, bug.PosY+1) as Bug,
-                    GetCellObject(bug.PosX, bug.PosY-1) as Bug
-                };
+                IGameObject[] nearestObjects = GetNearestObjects(bug);
 
                 var enemyBugs =
-                    from enemyBug in nearestBugs
+                    from nearestObject in nearestObjects
+                    let enemyBug = nearestObject as Bug
                     where enemyBug != null && enemyBug.Team == bug.EnemyTeam
                     select enemyBug;
 
@@ -183,9 +190,9 @@ namespace BugWars
                 {
                     bug.IsAtWar = false;
                 }
-
-                return bug;
             }
+
+            return bug;
         }
 
         private IGameObject Eat(Task<IGameObject> antecedent)
@@ -199,13 +206,34 @@ namespace BugWars
 
             lock (globalLock)
             {
-                if (bug == null || bug.IsAtWar || bug.IsPairing)
+                if (!bug.IsAtWar && !bug.IsPairing)
                 {
-                    return bug;
-                }
+                    IGameObject[] nearestObjects = GetNearestObjects(bug);
 
-                return bug;
+                    var nearestCrumbs =
+                        from nearestObject in nearestObjects
+                        let crumbs = nearestObject as Crumbs
+                        where crumbs != null
+                        select crumbs;
+
+                    if (nearestCrumbs.Any())
+                    {
+                        bug.IsEating = true;
+
+                        foreach (var crumbs in nearestCrumbs)
+                        {
+                            crumbs.Energy -= bug.Appetite;
+                            bug.Health += bug.Appetite;
+                        }
+                    }
+                    else
+                    {
+                        bug.IsEating = false;
+                    }
+                }
             }
+
+            return bug;
         }
 
         private IGameObject Pair(Task<IGameObject> antecedent)
@@ -475,11 +503,11 @@ namespace BugWars
         {
             if (team == Bug.TeamEnum.Blue)
             {
-                return new Bug(x, y, team, sex, conf.BugHealthBlue, conf.BugStrengthBlue);
+                return new Bug(x, y, team, sex, conf.BugHealthBlue, conf.BugStrengthBlue, conf.BugAppetiteBlue);
             }
             else if (team == Bug.TeamEnum.Red)
             {
-                return new Bug(x, y, team, sex, conf.BugHealthRed, conf.BugStrengthRed);
+                return new Bug(x, y, team, sex, conf.BugHealthRed, conf.BugStrengthRed, conf.BugAppetiteRed);
             }
             else
             {

@@ -46,12 +46,43 @@ namespace BugWars.GameObjects
         public bool IsAtWar { get; set; }
         public bool IsEating { get; set; }
 
-        public int Health { get; set; }
+        private int health;
+        public int Health
+        {
+            get
+            {
+                return health;
+            }
+
+            set
+            {
+                health = value;
+
+                if (health <= 0)
+                {
+                    health = 0;
+                    DeleteMeLater = true;
+                }
+                else
+                {
+                    DeleteMeLater = false;
+                }
+            }
+        }
+
+        public bool IsDead
+        {
+            get
+            {
+                return health <= 0;
+            }
+        }
+
         public uint Speed { get; set; }
         public int Strength { get; set; }
-        public uint Appetite { get; set; }
+        public int Appetite { get; set; }
 
-        public Bug(int x, int y, Bug.TeamEnum team, Bug.SexEnum sex, int health, int strength)
+        public Bug(int x, int y, Bug.TeamEnum team, Bug.SexEnum sex, int health, int strength, int appetite)
         {
             PosX = x;
             PosY = y;
@@ -59,6 +90,7 @@ namespace BugWars.GameObjects
             Sex = sex;
             Health = health;
             Strength = strength;
+            Appetite = appetite;
 
             IsAtWar = false;
             IsEating = false;
