@@ -392,16 +392,28 @@ namespace BugWars
                     bug.Direction = Bug.GetRandomDirection();
                 }
 
-                // TODO: сделать конфигурируемым
-                bug.Health -= 2;
-
-                if (bug.Health < 0)
-                {
-                    bug.DeleteMeLater = true;
-                }
-
                 return bug;
             }
+        }
+
+        private Bug ToxicHit(Task<IGameObject> antecedent)
+        {
+            Bug bug = antecedent.Result as Bug;
+
+            if (bug == null)
+            {
+                return null;
+            }
+
+            lock (globalLock)
+            {
+                if (!bug.IsAtWar && !bug.IsEating && !bug.IsPairing)
+                {
+                    bug.Health -= conf.ToxicHit;
+                }
+            }
+
+            return bug;
         }
 
         private void AddCrumb()
@@ -430,7 +442,8 @@ namespace BugWars
                     .ContinueWith<IGameObject>(Fight)
                     .ContinueWith<IGameObject>(Eat)
                     .ContinueWith<IGameObject>(Pair)
-                    .ContinueWith<IGameObject>(Move);
+                    .ContinueWith<IGameObject>(Move)
+                    .ContinueWith<IGameObject>(ToxicHit);
                 tasks.Add(task);
             }
 
@@ -441,7 +454,8 @@ namespace BugWars
                     .ContinueWith<IGameObject>(Fight)
                     .ContinueWith<IGameObject>(Eat)
                     .ContinueWith<IGameObject>(Pair)
-                    .ContinueWith<IGameObject>(Move);
+                    .ContinueWith<IGameObject>(Move)
+                    .ContinueWith<IGameObject>(ToxicHit);
                 tasks.Add(task);
             }
 
