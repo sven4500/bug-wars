@@ -23,5 +23,12 @@ namespace BugWars
             InitializeComponent();
             viewModel.Start();
         }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            // Уничтожаем окно. Как уничтожить окно описано здесь:
+            // https://stackoverflow.com/questions/568408/what-is-the-correct-way-to-dispose-of-a-wpf-window
+            this.Close();
+        }
     }
 }
