@@ -13,7 +13,7 @@ namespace BugWars
             get { return (MapSize >= BugCountTotal) && (BugHealthBlue > 0) && (BugHealthRed > 0); }
         }
 
-        public uint BugCountTotal
+        public int BugCountTotal
         {
             get { return BugCountRed + BugCountBlue; }
         }
@@ -33,8 +33,8 @@ namespace BugWars
         public int FeedRate { get; set; }
         public int CrumbEnergy { get; set; }
 
-        public uint BugCountBlue { get; set; }
-        public uint BugCountRed { get; set; }
+        public int BugCountBlue { get; set; }
+        public int BugCountRed { get; set; }
 
         public int BugHealthBlue { get; set; }
         public int BugHealthRed { get; set; }

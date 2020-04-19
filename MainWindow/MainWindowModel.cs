@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Drawing; // Point
 using System.Threading;
 using System.Diagnostics; // Debug.Assert
-using System.Collections.Generic;
+using System.Collections.Generic; // List<>
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -53,19 +54,32 @@ namespace BugWars
 
             feedRateSpin = conf.FeedRate;
 
-            // TODO: здесь явная ошибка. Исправь позже. posX и posY генерируют
-            // уникальные значения хотя это не требуется. Нужно чтобы точка
-            // была уникальной.
-            var posX = RandomUniqueList(0, (int)conf.MapWidth, (int)conf.BugCountTotal, random);
-            var teamBluePosX = posX.GetRange(0, (int)conf.BugCountBlue);
-            var teamRedPosX = posX.GetRange((int)conf.BugCountBlue, (int)conf.BugCountRed);
+            var pos = GetRandomPoints(conf, random);
+            var teamBluePos = pos.GetRange(0, conf.BugCountBlue);
+            var teamRedPos = pos.GetRange(conf.BugCountBlue, conf.BugCountRed);
 
-            var posY = RandomUniqueList(0, (int)conf.MapHeight, (int)conf.BugCountTotal, random);
-            var teamBluePosY = posY.GetRange(0, (int)conf.BugCountBlue);
-            var teamRedPosY = posY.GetRange((int)conf.BugCountBlue, (int)conf.BugCountRed);
+            bugsBlue = ReleaseBugs(teamBluePos.GetEnumerator(), Bug.TeamEnum.Blue, random);
+            bugsRed = ReleaseBugs(teamRedPos.GetEnumerator(), Bug.TeamEnum.Red, random);
+        }
 
-            bugsBlue = ReleaseBugs(teamBluePosX.GetEnumerator(), teamBluePosY.GetEnumerator(), Bug.TeamEnum.Blue, random);
-            bugsRed = ReleaseBugs(teamRedPosX.GetEnumerator(), teamRedPosY.GetEnumerator(), Bug.TeamEnum.Red, random);
+        static private List<Point> GetRandomPoints(Config conf, Random random)
+        {
+            List<Point> points = new List<Point>();
+
+            for (int i = 0; i < conf.BugCountTotal; ++i)
+            {
+                Point point = new Point();
+
+                do
+                {
+                    point.X = random.Next(0, conf.MapWidth);
+                    point.Y = random.Next(0, conf.MapHeight);
+                } while (points.Contains(point));
+
+                points.Add(point);
+            }
+
+            return points;
         }
 
         private bool IsCellEmpty(int x, int y)
@@ -75,11 +89,6 @@ namespace BugWars
 
         private IGameObject GetCellObject(int x, int y)
         {
-            if (x < 0 || x >= conf.MapWidth || y < 0 || y >= conf.MapHeight)
-            {
-                return null;
-            }
-
             IEnumerable<IGameObject>[] enumerables = { null, null, null, null };
 
             enumerables[0] =
@@ -365,12 +374,14 @@ namespace BugWars
                     ++desiredX;
                 }
 
-                if (IsCellEmpty(desiredX, desiredY))
+                if (desiredX >= 0 && desiredX < conf.MapWidth &&
+                    desiredY >= 0 && desiredY < conf.MapHeight &&
+                    IsCellEmpty(desiredX, desiredY) == true)
                 {
                     bug.PosX = desiredX;
                     bug.PosY = desiredY;
 
-                    if (random.Next() % 100 > 100 - conf.ChangeDirectionChance)
+                    if (random.Next(0, 100) > 100 - conf.ChangeDirectionChance)
                     {
                         bug.Direction = Bug.GetRandomDirection();
                     }
@@ -476,31 +487,6 @@ namespace BugWars
             crumbs.RemoveAll((crumb) => crumb.DeleteMeLater);
         }
 
-        // Метод генерирующий список уникальных значений. Необходим для того
-        // чтобы раскидать жуков по произвольным клеткам поля.
-        // https://stackoverflow.com/questions/14473321/generating-random-unique-values-c-sharp
-        static private List<int> RandomUniqueList(int minValue, int maxValue, int count, Random random)
-        {
-            Debug.Assert(maxValue >= minValue);
-
-            count = Math.Min(Math.Abs(maxValue - minValue), count);
-            var list = new List<int>(count);
-
-            for (int i = 0; i < count; ++i)
-            {
-                int value = 0;
-
-                do
-                {
-                    value = random.Next(minValue, maxValue);
-                } while (list.Contains(value));
-
-                list.Add(value);
-            }
-
-            return list;
-        }
-
         private Bug CreateBug(int x, int y, Bug.TeamEnum team, Bug.SexEnum sex)
         {
             if (team == Bug.TeamEnum.Blue)
@@ -517,19 +503,18 @@ namespace BugWars
             }
         }
 
-        private List<Bug> ReleaseBugs(IEnumerator<int> posX, IEnumerator<int> posY, Bug.TeamEnum team, Random random)
+        private List<Bug> ReleaseBugs(IEnumerator<Point> pos, Bug.TeamEnum team, Random random)
         {
             var bugs = new List<Bug>();
 
             for (int i = 0; i < conf.BugCountBlue; ++i)
             {
-                var advanceXSuccess = posX.MoveNext();
-                var advanceYSuccess = posY.MoveNext();
+                var advanceSuccess = pos.MoveNext();
 
-                if (advanceXSuccess == false || advanceYSuccess == false)
+                if (advanceSuccess == false || advanceSuccess == false)
                     throw new Exception();
 
-                Bug bug = CreateBug(posX.Current, posY.Current, team, Bug.GetRandomSex());
+                Bug bug = CreateBug(pos.Current.X, pos.Current.Y, team, Bug.GetRandomSex());
 
                 bugs.Add(bug);
             }
