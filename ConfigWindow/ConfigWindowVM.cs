@@ -24,8 +24,6 @@ namespace BugWars
             BugCountRed = 10,
             BugHealthBlue = 100,
             BugHealthRed = 100,
-            BugSpeedBlue = 1,
-            BugSpeedRed = 1,
             BugAppetiteBlue = 5,
             BugAppetiteRed = 5,
             BugStrengthBlue = 3,

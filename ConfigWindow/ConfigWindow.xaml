@@ -36,15 +36,18 @@
                 <Label Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"
                     Content="Размер карты (гор.)"/>
                 <TextBox Grid.Row="0" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                    Text="{Binding MapWidth}"/>
+                    Text="{Binding MapWidth}"
+                    ToolTip="Количество клеток карты по горизонтали."/>
                 <Label Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"
                     Content="Размер карты (верт.)"/>
                 <TextBox Grid.Row="1" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                    Text="{Binding MapHeight}"/>
+                    Text="{Binding MapHeight}"
+                    ToolTip="Количество клеток карты по вертикали."/>
                 <Label Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"
                     Content="Добавлять крошки"/>
                 <TextBox Grid.Row="2" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                    Text="{Binding Conf.FeedRate}"/>
+                    Text="{Binding Conf.FeedRate}"
+                    ToolTip="Количество ходов между добавлением крошек на карту."/>
                 <Label Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"
                     Content="Энергия крошек"/>
                 <TextBox Grid.Row="3" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center"
@@ -52,11 +55,13 @@
                 <Label Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"
                     Content="Токсичность среды"/>
                 <TextBox Grid.Row="4" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                    Text="{Binding Conf.ToxicHit}"/>
+                    Text="{Binding Conf.ToxicHit}"
+                    ToolTip="Количество урона который получает каждый жук после перемещения на соседнюю клетку."/>
                 <Label Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"
-                    Content="Вероятность направления"/>
+                    Content="Целеустремлённость"/>
                 <TextBox Grid.Row="5" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Center"
-                    Text="{Binding Conf.ChangeDirectionChance}"/>
+                    Text="{Binding Conf.ChangeDirectionChance}"
+                    ToolTip="Этот параметр задаёт вероятность смены направления [0..100]."/>
             </Grid>
             <Label Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center"
                     Content="Настройки команд"/>
@@ -96,22 +101,16 @@
                 <TextBox Grid.Row="1" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Stretch"
                     Text="{Binding Conf.BugHealthRed}"/>
                 <Label Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left"
-                    Content="Скорость передвижения"/>
-                <TextBox Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch"
-                    Text="{Binding Conf.BugSpeedBlue}" IsEnabled="False"/>
-                <TextBox Grid.Row="2" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Stretch"
-                    Text="{Binding Conf.BugSpeedRed}" IsEnabled="False"/>
-                <Label Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left"
                     Content="Скорость поедания"/>
-                <TextBox Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                <TextBox Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch"
                     Text="{Binding Conf.BugAppetiteBlue}"/>
-                <TextBox Grid.Row="3" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                <TextBox Grid.Row="2" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Stretch"
                     Text="{Binding Conf.BugAppetiteRed}"/>
-                <Label Grid.Row="4" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left"
+                <Label Grid.Row="3" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left"
                     Content="Сила"/>
-                <TextBox Grid.Row="4" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                <TextBox Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Stretch"
                     Text="{Binding Conf.BugStrengthBlue}"/>
-                <TextBox Grid.Row="4" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                <TextBox Grid.Row="3" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Stretch"
                     Text="{Binding Conf.BugStrengthRed}"/>
             </Grid>
             <Button Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Center"

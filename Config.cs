@@ -39,9 +39,6 @@ namespace BugWars
         public int BugHealthBlue { get; set; }
         public int BugHealthRed { get; set; }
 
-        public uint BugSpeedBlue { get; set; }
-        public uint BugSpeedRed { get; set; }
-
         public int BugAppetiteBlue { get; set; }
         public int BugAppetiteRed { get; set; }
 
