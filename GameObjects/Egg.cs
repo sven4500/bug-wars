@@ -10,35 +10,13 @@ namespace BugWars.GameObjects
     {
         public Bug.TeamEnum Team { get; set; }
 
-        private int hatchCounter;
-        public int HatchCounter
+        public int HatchCounter;
+
+        public bool IsHatched
         {
             get
             {
-                return hatchCounter;
-            }
-
-            set
-            {
-                hatchCounter = value;
-
-                if (hatchCounter <= 0)
-                {
-                    hatchCounter = 0;
-                    DeleteMeLater = true;
-                }
-                else
-                {
-                    DeleteMeLater = false;
-                }
-            }
-        }
-
-        public bool IsHatching
-        {
-            get
-            {
-                return hatchCounter <= 0;
+                return HatchCounter <= 0;
             }
         }
 

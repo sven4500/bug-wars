@@ -54,15 +54,18 @@ namespace BugWars
 
             feedRateSpin = conf.FeedRate;
 
-            var pos = GetRandomPoints(conf, random);
+            var pos = GetRandomPoints();
             var teamBluePos = pos.GetRange(0, conf.BugCountBlue);
             var teamRedPos = pos.GetRange(conf.BugCountBlue, conf.BugCountRed);
+
+            Debug.Assert(teamBluePos.Count == conf.BugCountBlue);
+            Debug.Assert(teamRedPos.Count == conf.BugCountRed);
 
             bugsBlue = ReleaseBugs(teamBluePos.GetEnumerator(), Bug.TeamEnum.Blue, random);
             bugsRed = ReleaseBugs(teamRedPos.GetEnumerator(), Bug.TeamEnum.Red, random);
         }
 
-        static private List<Point> GetRandomPoints(Config conf, Random random)
+        private List<Point> GetRandomPoints()
         {
             List<Point> points = new List<Point>();
 
@@ -148,18 +151,22 @@ namespace BugWars
                 return null;
             }
 
-            egg.HatchCounter -= 1;
-
-            if (egg.IsHatching)
+            lock (globalLock)
             {
-                lock (globalLock)
-                {
-                    Bug bug = CreateBug(egg.PosX, egg.PosY, egg.Team, Bug.GetRandomSex());
-                    bugsBlue.Add(bug);
-                }
-            }
+                egg.HatchCounter -= 1;
 
-            return egg;
+                if (egg.IsHatched)
+                {
+                    lock (globalLock)
+                    {
+                        Bug bug = CreateBug(egg.PosX, egg.PosY, egg.Team, Bug.GetRandomSex());
+                        var bugs = (egg.Team == Bug.TeamEnum.Blue) ? bugsBlue : bugsRed;
+                        bugs.Add(bug);
+                    }
+                }
+
+                return egg;
+            }
         }
 
         private IGameObject Fight(Task<IGameObject> antecedent)
@@ -231,8 +238,7 @@ namespace BugWars
 
                         foreach (var crumbs in nearestCrumbs)
                         {
-                            crumbs.Energy -= bug.Appetite;
-                            bug.Health += bug.Appetite;
+                            bug.Health += crumbs.TakeEnergy(bug.Appetite);
                         }
                     }
                     else
@@ -461,8 +467,8 @@ namespace BugWars
             tasks.ForEach((task) => task.Wait());
             tasks.Clear();
 
-            bugsBlue.RemoveAll((obj) => obj.DeleteMeLater);
-            bugsRed.RemoveAll((obj) => obj.DeleteMeLater);
+            bugsBlue.RemoveAll((obj) => obj.IsDead);
+            bugsRed.RemoveAll((obj) => obj.IsDead);
 
             foreach (var obj in eggs)
             {
@@ -474,7 +480,7 @@ namespace BugWars
             tasks.ForEach((task) => task.Wait());
             tasks.Clear();
 
-            eggs.RemoveAll((obj) => obj.DeleteMeLater);
+            eggs.RemoveAll((obj) => obj.IsHatched);
 
             feedRateSpin--;
 
@@ -484,7 +490,7 @@ namespace BugWars
                 feedRateSpin = conf.FeedRate;
             }
 
-            crumbs.RemoveAll((crumb) => crumb.DeleteMeLater);
+            crumbs.RemoveAll((crumb) => crumb.IsEmpty);
         }
 
         private Bug CreateBug(int x, int y, Bug.TeamEnum team, Bug.SexEnum sex)

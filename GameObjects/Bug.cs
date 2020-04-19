@@ -78,11 +78,6 @@ namespace BugWars.GameObjects
                 if (health <= 0)
                 {
                     health = 0;
-                    DeleteMeLater = true;
-                }
-                else
-                {
-                    DeleteMeLater = false;
                 }
             }
         }

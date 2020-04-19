@@ -8,35 +8,32 @@ namespace BugWars.GameObjects
 {
     public class Crumbs : GameObject
     {
-        private int energy;
         public int Energy
+        {
+            get;
+            private set;
+        }
+
+        public bool IsEmpty
         {
             get
             {
-                return energy;
+                return Energy <= 0;
             }
+        }
 
-            set
-            {
-                energy = value;
-
-                if (value <= 0)
-                {
-                    energy = 0;
-                    DeleteMeLater = true;
-                }
-                else
-                {
-                    DeleteMeLater = false;
-                }
-            }
+        public int TakeEnergy(int energy)
+        {
+            energy = Math.Min(Energy, energy);
+            Energy -= energy;
+            return energy;
         }
 
         public Crumbs(int x, int y, int energy)
         {
             PosX = x;
             PosY = y;
-            Energy = energy;
+            Energy = Math.Max(energy, 0);
         }
     }
 }
