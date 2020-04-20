@@ -16,9 +16,11 @@ namespace BugWars
 {
     public partial class MainWindow : Window
     {
+        private readonly MainWindowVM viewModel;
+
         public MainWindow(Config conf)
         {
-            MainWindowVM viewModel = new MainWindowVM(conf);
+            viewModel = new MainWindowVM(conf);
             DataContext = viewModel;
             InitializeComponent();
             viewModel.Start();
@@ -28,6 +30,7 @@ namespace BugWars
         {
             // Уничтожаем окно. Как уничтожить окно описано здесь:
             // https://stackoverflow.com/questions/568408/what-is-the-correct-way-to-dispose-of-a-wpf-window
+            viewModel.Pause();
             this.Close();
         }
     }

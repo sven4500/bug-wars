@@ -58,8 +58,8 @@ namespace BugWars
             var teamBluePos = pos.GetRange(0, conf.BugCountBlue);
             var teamRedPos = pos.GetRange(conf.BugCountBlue, conf.BugCountRed);
 
-            Debug.Assert(teamBluePos.Count == conf.BugCountBlue);
-            Debug.Assert(teamRedPos.Count == conf.BugCountRed);
+            //Debug.Assert(teamBluePos.Count == conf.BugCountBlue);
+            //Debug.Assert(teamRedPos.Count == conf.BugCountRed);
 
             bugsBlue = ReleaseBugs(teamBluePos.GetEnumerator(), Bug.TeamEnum.Blue, random);
             bugsRed = ReleaseBugs(teamRedPos.GetEnumerator(), Bug.TeamEnum.Red, random);
@@ -291,11 +291,11 @@ namespace BugWars
                         {
                             var otherBug = otherBugs.First();
 
-                            Debug.Assert(bug.PairingCounter == 0);
-                            Debug.Assert(bug.FertilityCounter == 0);
+                            //Debug.Assert(bug.PairingCounter == 0);
+                            //Debug.Assert(bug.FertilityCounter == 0);
 
-                            Debug.Assert(otherBug.PairingCounter == 0);
-                            Debug.Assert(otherBug.FertilityCounter == 0);
+                            //Debug.Assert(otherBug.PairingCounter == 0);
+                            //Debug.Assert(otherBug.FertilityCounter == 0);
 
                             // TODO: можно сделать конфигурируемым параметром.
                             otherBug.IsPairing = true;
@@ -309,7 +309,7 @@ namespace BugWars
                     }
                     else
                     {
-                        Debug.Assert(bug.PairingCounter == 0);
+                        //Debug.Assert(bug.PairingCounter == 0);
 
                         bug.FertilityCounter--;
                     }

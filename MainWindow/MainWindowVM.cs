@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input; // ICommand
 using System.Windows.Controls; // Canvas
-using System.Windows.Threading; // DispatchetTimer
+using System.Windows.Threading; // DispatcherTimer
 using System.Windows.Shapes; // Shape
 using System.Windows.Media; // Brushes
 using System.Windows.Media.Imaging; // BitmapImage
@@ -162,6 +162,11 @@ namespace BugWars
         public void Start()
         {
             Start(null);
+        }
+
+        public void Pause()
+        {
+            Pause(this);
         }
 
         private void Start(object e)

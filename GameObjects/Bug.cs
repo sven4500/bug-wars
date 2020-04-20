@@ -90,7 +90,6 @@ namespace BugWars.GameObjects
             }
         }
 
-        public uint Speed { get; set; }
         public int Strength { get; set; }
         public int Appetite { get; set; }
 
